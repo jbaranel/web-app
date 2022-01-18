@@ -2,11 +2,16 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.47.0",
     "aws-sdk": "^2.1058.0",
+    "cors": "^2.8.5",
+    "dotenv": "^14.1.1",
     "express": "^4.17.2",
     "nodemon": "^2.0.15"
   },
   "type": "module",
   "scripts": {
     "devStart": "nodemon api.js"
+  },
+  "devDependencies": {
+    "node-env-run": "^4.0.2"
   }
 }

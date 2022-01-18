@@ -8,5 +8,5 @@ export const validateEmail = (email) => {
 
 export const stringToDate = (unixString) => {
   const unixTime = parseInt(unixString);
-  return new Date(unixTime).toLocaleDateString("en-US")
+  return new Date(unixTime)
 }
