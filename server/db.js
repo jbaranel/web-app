@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 import { User } from './schema.js'
 import { validateEmail, stringToDate } from './utils.js'
+import bcrypt from 'bcrypt'
 
 AWS.config.update({region: "us-east-1"});
 
@@ -20,10 +21,9 @@ async function getUser(username){
         .then((response) => {
             const user = response?.Item
             if (username == user?.username){
-                return ({
-                    "username": user.username, 
-                    "createdAt": stringToDate(user.createdAt)
-                });
+                return (
+                    new User(user.username, user.password, user.firstName, user.lastName, user.email, user.createdAt)
+                   );
             }
             else {
                 return ({"message":"User not found"})
@@ -39,6 +39,19 @@ async function createUser(user){
     if(!user.username){
         return ({"message":"Enter a username"});
     }
+    if(!user.password){
+        return ({"message":"Enter a password"});
+    }
+    const salt = 10;
+    bcrypt.hash(user.password, salt, (err, hash) => {
+        if (err) {
+            console.log(err)
+        }
+        else {
+            delete user.password;
+            user.hashedPassword = hash;
+        }
+    })
     try {
         let params = {
             Key: {
@@ -66,7 +79,7 @@ async function createUser(user){
                     return ({"message":"Enter a valid email address"})
                 }
                 else {
-                    let newUser = new User(user.username, user.firstName, user.lastName, user.email, Date.now().toString())
+                    let newUser = new User(user.username, user.hashedPassword, user.firstName, user.lastName, user.email, Date.now().toString())
                   
                     let params = {
                         TableName: tableName,
@@ -84,8 +97,7 @@ async function createUser(user){
 
                     return newUser;
                 }
-            }
-            
+            }            
         })
         return result
     } catch (error) {

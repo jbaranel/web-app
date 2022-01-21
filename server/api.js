@@ -2,6 +2,8 @@ import { createUser, getUser } from './db.js'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
+
 dotenv.config()
 
 const app = express()
@@ -18,26 +20,36 @@ app.get('/', (req, res) => {
     })
 })
 
-app.post('/user', (req, res) => {
-    const body = req.body;
-    const response = createUser(body)
-    .then((dbRes)=>{
-        res.send(dbRes)
-    })
-    .catch((error) => {
-        res.send(error)
-    })
+app.post('/login', async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    const user = await getUser(username)
+    if (user.message) {
+        res.send(user)
+    }
+    else {
+        bcrypt.compare(password, user.password, (error, response) => {
+            if(response){
+                res.send(user)
+            }
+            else {
+                res.send({"message": "Incorrect password"})
+            }
+        })       
+    }
 })
 
-app.get('/user/:username', (req, res) => {
+app.post('/user', async (req, res) => {
+    const body = req.body;
+    const response = await createUser(body)
+    res.send(response)
+})
+
+//TODO should disable this function and use a different getUser function
+app.get('/user/:username', async (req, res) => {
     const username = req.params.username;
-    const response = getUser(username)
-    .then((dbRes) => {
-        res.send(dbRes)
-    })  
-    .catch((error) => {
-        res.send(error)
-    })  
+    const response = await getUser(username)
+    res.send(response)    
 })
 
 app.post('/login', (req, res) => {

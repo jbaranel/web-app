@@ -2,9 +2,11 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.47.0",
     "aws-sdk": "^2.1058.0",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^14.1.1",
     "express": "^4.17.2",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.15"
   },
   "type": "module",
