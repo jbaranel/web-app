@@ -1,4 +1,4 @@
-import { createUser, getUser } from './db.js'
+import { createUser, getUser, createPost, getPosts } from './db.js'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -52,10 +52,19 @@ app.get('/user/:username', async (req, res) => {
     res.send(response)    
 })
 
-app.post('/login', (req, res) => {
-    const body = req.body
-    res.send("hi")
+app.post('/createPost', async (req, res) => {
+    const username = req.body.username;
+    const post = req.body.post;
+    const response = await createPost(username, post)
+    res.send(response)
 })
+
+app.post('/posts', async (req, res) => {
+    const username = req.body.username;
+    const response = await getPosts(username)
+    res.send(response)
+})
+
 
 app.listen(port, () => {
     console.log(`API running on port:${port}`)

@@ -5,7 +5,16 @@ export class User {
         this.firstName = firstName,
         this.lastName = lastName,
         this.email = email,
-        this.createdAt = createdAt
+        this.createdAt = createdAt.toString()
+    }
+  }
+
+  export class Post {
+    constructor(id, username, createdAt, post) {
+        this.id = id,
+        this.username = username,        
+        this.createdAt = createdAt.toString(),
+        this.post = post
     }
   }
 

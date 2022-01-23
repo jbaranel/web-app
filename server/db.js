@@ -1,7 +1,8 @@
 import AWS from "aws-sdk";
-import { User } from './schema.js'
+import { User, Post } from './schema.js'
 import { validateEmail, stringToDate } from './utils.js'
 import bcrypt from 'bcrypt'
+import { v4 as uuidv4 } from 'uuid'
 
 AWS.config.update({region: "us-east-1"});
 
@@ -79,7 +80,7 @@ async function createUser(user){
                     return ({"message":"Enter a valid email address"})
                 }
                 else {
-                    let newUser = new User(user.username, user.hashedPassword, user.firstName, user.lastName, user.email, Date.now().toString())
+                    let newUser = new User(user.username, user.hashedPassword, user.firstName, user.lastName, user.email, Date.now())
                   
                     let params = {
                         TableName: tableName,
@@ -105,4 +106,54 @@ async function createUser(user){
     }
 }
 
-export { createUser, getUser }
+async function createPost(username, post) {
+    const id = uuidv4()
+    const newPost = new Post(id, username, Date.now(), post)
+    let params = {
+        TableName: "posts",
+        Item: newPost
+    }
+    
+    let result = dynamodb.put(params, ((err, res)=> {
+        if (err) {
+            console.log(err)
+            return err;
+        }
+        else {
+            return (newPost)
+        }
+    }))
+    return newPost
+    
+}
+
+async function getPosts(username) {
+    try {
+        let params = {             
+            TableName: "posts"
+        };
+        let result = await dynamodb.scan(params).promise()
+        .then((response) => {
+            let posts = response.Items
+            posts.sort(function(a, b) {
+                var keyA = a.createdAt,
+                  keyB = b.createdAt;
+                // Compare the 2 dates
+                if (keyA > keyB) return -1;
+                if (keyA < keyB) return 1;
+                return 0;
+              });
+            
+            posts.forEach((post) => {
+                post.createdAt = stringToDate(post.createdAt)
+            })
+            return posts
+        })
+        return result
+    } catch (error) {
+        console.error(error);
+    }
+    
+}
+
+export { createUser, getUser, createPost, getPosts}
