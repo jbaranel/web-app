@@ -3,12 +3,19 @@ import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Avatar from "@mui/material/Avatar"
+import Button from "react-bootstrap/Button"
 
 export default function NavBar() {
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem("isAuthenticated")
+  }
+  
   return (
     <div>
       <Navbar bg="dark" variant="dark">
-        <Container>
+        <Container >
           <Navbar.Brand href="/#">My App Name</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="/home">Home</Nav.Link>
@@ -21,8 +28,8 @@ export default function NavBar() {
                 </span>
               </div>              
               </Nav.Link>
-              <Nav.Link href="#/logout">Logout</Nav.Link>
           </Nav>
+            <Button variant="dark" onClick={handleLogout}>Logout</Button>
         </Container>
       </Navbar>
     </div>

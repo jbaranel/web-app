@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Login from './pages/Login';
 import Feed from './pages/Feed'
 import Profile from "./pages/Profile";
+import PrivateRoute from "./components/PrivateRoute"
 import './App.css';
 import NavBar from "./components/NavBar"
 
@@ -11,14 +12,16 @@ import NavBar from "./components/NavBar"
 function App() {
   return (
     <>
-    <NavBar/>
     <BrowserRouter>
+    <NavBar/>
     <Routes>
+      <Route exact path='/' element={<PrivateRoute/>}>
+        <Route path="/home" element={<Home/>} />
+        <Route path="/feed" element={<Feed/>} />
+        <Route path="/profile" element={<Profile/>} />
+      </Route>
       <Route path="/register" element={<Register/>} />
       <Route path="/login" element={<Login/>} />
-      <Route path="/home" element={<Home/>} />
-      <Route path="/feed" element={<Feed/>} />
-      <Route path="/profile" element={<Profile/>} />
     </Routes>
   </BrowserRouter>
     </>

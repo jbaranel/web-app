@@ -48,6 +48,7 @@ const RegisterForm = () => {
             username: username,
             firstName: firstName,
             lastName: lastName,
+            password: password
           }),
         };
         let response = await fetch(
@@ -62,6 +63,7 @@ const RegisterForm = () => {
               setApiData(data);
               setSuccess(true);
               localStorage.setItem("isAuthenticated", true)
+              localStorage.setItem("user", JSON.stringify(apiData))
             }
             setIsLoading(false);
           });

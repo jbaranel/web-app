@@ -47,8 +47,10 @@ const LoginForm = () => {
               setError(data.message);
             } else {
               setApiData(data);
+              console.log(apiData)
               setSuccess(true);
               localStorage.setItem("isAuthenticated", true)
+              localStorage.setItem("user", JSON.stringify(apiData))
             }
             setIsLoading(false);
           });
