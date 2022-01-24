@@ -52,7 +52,7 @@ const RegisterForm = () => {
           }),
         };
         let response = await fetch(
-          `${process.env.REACT_APP_API_URL}/user`,
+          `${process.env.REACT_APP_API_URL}/user/register`,
           payload
         )
           .then((res) => res.json())

@@ -24,7 +24,7 @@ function CreatePost(props) {
           }),
         };
         let response = fetch(
-          `${process.env.REACT_APP_API_URL}/createPost`,
+          `${process.env.REACT_APP_API_URL}/post/create`,
           payload
         ).
         then((res) => res.json()).then((data) => {

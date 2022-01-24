@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
-import { User, Post } from './schema.js'
+import User from './models/User.js'
+import Post from './models/Post.js'
 import { validateEmail, stringToDate } from './utils.js'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
@@ -9,32 +10,6 @@ AWS.config.update({region: "us-east-1"});
 const dynamodb = new AWS.DynamoDB.DocumentClient()
 
 const tableName = "users"
-
-async function getUser(username){
-    try {
-        let params = {
-            Key: {
-             "username": username
-            }, 
-            TableName: tableName
-        };
-        let result = await dynamodb.get(params).promise()
-        .then((response) => {
-            const user = response?.Item
-            if (username == user?.username){
-                return (
-                    new User(user.username, user.password, user.firstName, user.lastName, user.email, user.createdAt, user.following, user.followers)
-                   );
-            }
-            else {
-                return ({"message":"User not found"})
-            }
-        })
-        return result
-    } catch (error) {
-        console.error(error);
-    }
-}
 
 async function createUser(user){
     if(!user.username){
@@ -124,7 +99,6 @@ async function createPost(username, post) {
         }
     }))
     return newPost
-    
 }
 
 async function getPosts(username) {
@@ -249,4 +223,4 @@ async function followUser(username, follow) {
     return (user)
 }
 
-export { createUser, getUser, createPost, getPosts, deletePost, followUser}
+export { createUser, createPost, getPosts, deletePost, followUser}
