@@ -23,7 +23,7 @@ async function getUser(username){
             const user = response?.Item
             if (username == user?.username){
                 return (
-                    new User(user.username, user.password, user.firstName, user.lastName, user.email, user.createdAt)
+                    new User(user.username, user.password, user.firstName, user.lastName, user.email, user.createdAt, user.following, user.followers)
                    );
             }
             else {
@@ -156,4 +156,97 @@ async function getPosts(username) {
     
 }
 
-export { createUser, getUser, createPost, getPosts}
+async function deletePost(username, id) {
+    //TODO validate that user is authorized to delete this post
+    try {
+        let params = {             
+            TableName: "posts",
+            Key: {
+                "id": id
+                }
+            }
+            dynamodb.delete(params, function(err, data) {
+                if (err) {
+                    console.log(err)
+                }
+                else {
+                }
+            })
+            return ({message: "Post deleted"})
+        }
+    catch (error) {
+        console.log(error)
+    }
+}
+
+async function followUser(username, follow) {
+    let user = await getUser(username)
+    let userToFollow = await getUser(follow)
+
+    if (userToFollow.message) {
+        return userToFollow
+    }
+    else if (user.username === userToFollow.username) {
+        return ({message:"Cannot follow yourself"})
+    }
+    else if (user?.following?.includes(follow)) {
+        return ({message:`Already following ${follow}`})
+    }
+    else {
+        if (user.following) {
+            user.following = [...user.following, userToFollow.username]
+        }
+        else {
+            user.following = [userToFollow.username]
+        }
+        const followingParams = {
+            TableName: 'users',
+            Key: {
+              "username": user.username,
+            },
+            UpdateExpression: 'set following = :f',
+            ExpressionAttributeValues: {
+              ':f': user.following,
+            },
+          }
+    
+        dynamodb.update(followingParams, function(err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log(data)
+            }
+        })
+
+        if (userToFollow.followers) {
+            userToFollow.followers = [...userToFollow.followers, user.username]
+        }
+        else {
+            userToFollow.followers = [user.username]
+        }
+        console.log(userToFollow)
+        const followerParams = {
+            TableName: 'users',
+            Key: {
+                "username": userToFollow.username,
+            },
+            UpdateExpression: 'set followers = :f',
+            ExpressionAttributeValues: {
+                ':f': userToFollow.followers,
+            }
+        }
+
+        dynamodb.update(followerParams, function(err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log(data)
+            }
+        })
+    }
+    return (user)
+}
+
+export { createUser, getUser, createPost, getPosts, deletePost, followUser}

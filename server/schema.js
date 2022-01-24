@@ -1,11 +1,13 @@
 export class User {
-    constructor(username, password, firstName, lastName, email, createdAt) {
+    constructor(username, password, firstName, lastName, email, createdAt, following, followers) {
         this.username = username,
         this.password = password,
         this.firstName = firstName,
         this.lastName = lastName,
         this.email = email,
-        this.createdAt = createdAt.toString()
+        this.createdAt = createdAt.toString(),
+        this.following = following,
+        this.followers = followers
     }
   }
 
@@ -14,7 +16,8 @@ export class User {
         this.id = id,
         this.username = username,        
         this.createdAt = createdAt.toString(),
-        this.post = post
+        this.post = post,
+        this.likes = 0
     }
   }
 

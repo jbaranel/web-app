@@ -1,4 +1,4 @@
-import { createUser, getUser, createPost, getPosts } from './db.js'
+import { createUser, getUser, createPost, getPosts, deletePost, followUser } from './db.js'
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 app.post('/login', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
-    const user = await getUser(username)
+    const user = await getUser(username)    
     if (user.message) {
         res.send(user)
     }
@@ -52,6 +52,13 @@ app.get('/user/:username', async (req, res) => {
     res.send(response)    
 })
 
+app.post('/user/:username/follow', async (req, res) => {
+    const username = req.params.username;
+    const follow = req.body.username
+    const response = await followUser(username, follow)
+    res.send(response)
+})
+
 app.post('/createPost', async (req, res) => {
     const username = req.body.username;
     const post = req.body.post;
@@ -65,6 +72,13 @@ app.post('/posts', async (req, res) => {
     res.send(response)
 })
 
+
+app.delete('/post/:id', async (req, res) => {
+    const username = req.body.username;
+    const id = req.params.id
+    const response = await deletePost(username, id)
+    res.send(response)
+})
 
 app.listen(port, () => {
     console.log(`API running on port:${port}`)
