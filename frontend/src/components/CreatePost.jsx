@@ -37,12 +37,13 @@ function CreatePost(props) {
           }
         });
       } catch (error) {
+        console.log(error)
       }
     }
   }
 
   return (
-    <div class="mb-3 mt-3">
+    <div className="mb-3 mt-3">
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
           <Form.Label>

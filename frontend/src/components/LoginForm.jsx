@@ -37,23 +37,22 @@ const LoginForm = () => {
             "password":password
           })          
         };
-        let response = await fetch(
+        await fetch(
           `${process.env.REACT_APP_API_URL}/login`,
           payload
         )
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.message) {
-              setError(data.message);
-            } else {
-              setApiData(data);
-              console.log(apiData)
-              setSuccess(true);
-              localStorage.setItem("isAuthenticated", true)
-              localStorage.setItem("user", JSON.stringify(apiData))
-            }
-            setIsLoading(false);
-          });
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.message) {
+            setError(data.message);
+          } else {
+            setApiData(data);
+            setSuccess(true);
+            localStorage.setItem("user", JSON.stringify(data))
+            localStorage.setItem("isAuthenticated", true)
+          }
+          setIsLoading(false);
+        });
       } catch (error) {
         setError(error);
         setIsLoading(false);
@@ -61,7 +60,7 @@ const LoginForm = () => {
     }
   }
   return (
-    <div class="p-4 align-self-center border rounded">
+    <div className="p-4 align-self-center border rounded">
       <MainHeader title="Login"></MainHeader>
       {isLoading
         ? <Loading />

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import "./Loading.css";
+import "./styles/Loading.css";
 
 function Loading() {
   return (
-    <div class="d-flex justify-content-center">
+    <div className="d-flex justify-content-center">
       <div className="spinner">
         <div className="half-spinner"></div>
       </div>      

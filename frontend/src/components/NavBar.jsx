@@ -10,20 +10,21 @@ export default function NavBar() {
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("isAuthenticated")
+    localStorage.removeItem("user")
   }
   
   return (
     <div>
       <Navbar bg="dark" variant="dark">
-        <Container >
+        <Container>
           <Navbar.Brand href="/#">My App Name</Navbar.Brand>
           <Nav className="me-auto">
             <Nav.Link href="/home">Home</Nav.Link>
             <Nav.Link href="/feed">Feed</Nav.Link>
             <Nav.Link href="/profile">
-              <div class="d-flex justify-content-start"> 
+              <div className="d-flex justify-content-start"> 
               Profile
-                <span class="mx-2">
+                <span className="mx-2">
                   <Avatar alt="Profile Picture" src="https://mui.com/static/images/avatar/1.jpg" sx={{ width: 24, height: 24 }}/>
                 </span>
               </div>              
