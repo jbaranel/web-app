@@ -1,8 +1,5 @@
 import AWS from "aws-sdk";
 import User from "../models/User.js";
-import { validateEmail, stringToDate } from "../utils.js";
-import bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
 
 AWS.config.update({ region: "us-east-1" });
 
@@ -10,7 +7,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const tableName = "users";
 
-export const getUser = async (req, res) => {
+export async function getUser (req, res) {
   const { username } = req.params;
 
   let params = {
@@ -48,84 +45,11 @@ export const getUser = async (req, res) => {
     });
 };
 
-export const createUser = async (req, res) => {
-  const { username, password, firstName, lastName, email } = req.body;
+export async function followUser (req, res) {
+  const { username } = req.user;
+  const follow = req.params.username;
 
-  if (!username) {
-    return res.status(400).send({ message: "Missing username" });
-  }
-  if (!password) {
-    return res.status(400).send({ message: "Missing password" });
-  }
-
-  const salt = 10;
-  bcrypt.hash(password, salt, (err, hash) => {
-    if (err) {
-      console.log(err);
-    } else {
-      password = hash;
-    }
-  });
-
-  let params = {
-    Key: {
-      username: username,
-    },
-    TableName: tableName,
-  };
-
-  await dynamodb
-    .get(params)
-    .promise()
-    .then((response) => {
-      const checkUsername = response.Item?.username;
-      if (checkUsername == username) {
-        return res.status(400).send({message: "Username already exists"})
-      } else {
-        if (!firstName) {
-            return res.status(400).send({message: "Missing first name" });
-        } else if (!lastName) {
-            return res.status(400).send({ message: "Missing last name" });
-        } else if (!email) {
-            return res.status(400).send({ message: "Missing email" });
-        } else if (!validateEmail(email)) {
-            return res.status(400).send({message: "Enter a valid email address" });
-        } else {
-          let newUser = new User(
-            username,
-            password,
-            firstName,
-            lastName,
-            email,
-            Date.now()
-          );
-
-          let params = {
-            TableName: tableName,
-            Item: newUser,
-          };
-
-          dynamodb.put(params, (err, res) => {
-            if (err) {
-                console.log(err);
-                return res.status(500).send({ message: "An error has occured" });
-            } else {
-              return res.send(newUser)
-            }
-          });
-        }
-      }
-    })
-    .catch((error) => {
-        console.error(error);
-        return res.status(500).send({ message: "An error has occured" });
-    });
-};
-
-export const followUser = async (req, res) => {
-  const { username } = req.params;
-  const follow = req.body.username;
-
+  //TODO need to rewrite this get user function
   let user = await getUser(username);
   let userToFollow = await getUser(follow);
 

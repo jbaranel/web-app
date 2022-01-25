@@ -12,7 +12,7 @@
   },
   "type": "module",
   "scripts": {
-    "devStart": "nodemon api.js"
+    "devStart": "nodemon index.js"
   },
   "devDependencies": {
     "node-env-run": "^4.0.2"

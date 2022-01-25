@@ -1,7 +1,7 @@
 import AWS from "aws-sdk";
 import User from './models/User.js'
 import Post from './models/Post.js'
-import { validateEmail, stringToDate } from './utils.js'
+import { validateEmail, stringToDate } from './helpers/utils.js'
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -81,24 +81,23 @@ async function createUser(user){
     }
 }
 
-async function createPost(username, post) {
-    const id = uuidv4()
-    const newPost = new Post(id, username, Date.now(), post)
-    let params = {
-        TableName: "posts",
-        Item: newPost
+export async function getUser(username) {
+    try {
+        let params = {
+            Key: {
+             username: username
+            }, 
+            TableName: tableName
+        };
+        let result = await dynamodb.get(params).promise()
+        .then((response) => {
+            return response.Item
+        })
+        return result
     }
-    
-    let result = dynamodb.put(params, ((err, res)=> {
-        if (err) {
-            console.log(err)
-            return err;
-        }
-        else {
-            return (newPost)
-        }
-    }))
-    return newPost
+    catch (error) {
+        return error
+    }
 }
 
 async function getPosts(username) {
@@ -128,29 +127,6 @@ async function getPosts(username) {
         console.error(error);
     }
     
-}
-
-async function deletePost(username, id) {
-    //TODO validate that user is authorized to delete this post
-    try {
-        let params = {             
-            TableName: "posts",
-            Key: {
-                "id": id
-                }
-            }
-            dynamodb.delete(params, function(err, data) {
-                if (err) {
-                    console.log(err)
-                }
-                else {
-                }
-            })
-            return ({message: "Post deleted"})
-        }
-    catch (error) {
-        console.log(error)
-    }
 }
 
 async function followUser(username, follow) {
@@ -223,4 +199,4 @@ async function followUser(username, follow) {
     return (user)
 }
 
-export { createUser, createPost, getPosts, deletePost, followUser}
+export { createUser, getPosts, followUser}
