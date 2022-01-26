@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -9,9 +9,8 @@ export default function NavBar() {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    localStorage.removeItem("isAuthenticated")
-    localStorage.removeItem("user")
-  }
+    localStorage.removeItem("auth")
+  } 
   
   return (
     <div>

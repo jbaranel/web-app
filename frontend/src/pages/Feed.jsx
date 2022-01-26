@@ -7,32 +7,32 @@ import Loading from "../components/Loading"
 export default function Feed() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
+  
+  const token = localStorage.getItem("auth")
 
   async function getPosts() {
     setIsLoading(true)
     let payload = {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: "username",
-      }),
+        "Authorization": `Bearer ${token}`
+      },     
     };
     let response = await fetch(
-      `${process.env.REACT_APP_API_URL}/posts`,
+      `${process.env.REACT_APP_API_URL}/post/all`,
       payload
     )
     .then((res) => res.json())
     .then((data) => {
-      setPosts(data)       
+      setPosts(data.posts)       
   }).catch((error) => {
     alert("Cannot get posts")
   }) 
   setIsLoading(false) 
 } 
   useEffect(() => {
-    const fetchPosts = getPosts()  
+    getPosts()  
   }, [])
 
   return (

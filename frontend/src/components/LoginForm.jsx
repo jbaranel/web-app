@@ -47,9 +47,8 @@ const LoginForm = () => {
             setError(data.message);
           } else {
             setApiData(data);
-            setSuccess(true);
-            localStorage.setItem("user", JSON.stringify(data))
-            localStorage.setItem("isAuthenticated", true)
+            setSuccess(true);            
+            localStorage.setItem("auth", data.accessToken)
           }
           setIsLoading(false);
         });

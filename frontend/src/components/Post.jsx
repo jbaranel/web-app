@@ -24,11 +24,13 @@ function Post({ post }) {
   };
 
   const deletePost = () => {
+    const token = localStorage.getItem("auth")
     try {
       let payload = {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify({
           username: post.username,

@@ -7,19 +7,21 @@ function CreatePost(props) {
   const [post, setPost] = useState("");  
 
   function handleSubmit(event) {
-    const user = JSON.parse(localStorage.getItem("user"))
+    
+
     event.preventDefault();
     if (!post) {
       alert("Post cannot be empty!");
     } else {
       try {
+        const token = localStorage.getItem("auth")
         let payload = {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
           },
           body: JSON.stringify({
-            username: user.username,
             post: post,
           }),
         };

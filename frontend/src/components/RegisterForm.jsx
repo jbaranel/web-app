@@ -52,7 +52,7 @@ const RegisterForm = () => {
           }),
         };
         let response = await fetch(
-          `${process.env.REACT_APP_API_URL}/user/register`,
+          `${process.env.REACT_APP_API_URL}/register`,
           payload
         )
           .then((res) => res.json())
@@ -62,8 +62,7 @@ const RegisterForm = () => {
             } else {
               setApiData(data);
               setSuccess(true);
-              localStorage.setItem("isAuthenticated", true)
-              localStorage.setItem("user", JSON.stringify(apiData))
+              localStorage.setItem("auth", data.accessToken)
             }
             setIsLoading(false);
           });

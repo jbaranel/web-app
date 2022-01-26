@@ -1,23 +1,84 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import Stack from '@mui/material/Stack';
+import React, { useState } from "react";
+import { useEffect } from "react";
 
-const Input = styled('input')({
-  display: 'none',
-});
+const UploadAndDisplayImage = () => {
+  const [selectedImage, setSelectedImage] = useState(null);
 
-export default function UploadButtons() {
+  //TODO clean up this function
+  useEffect(() => {
+    if (selectedImage?.name) {      
+      const getUrl = async () => {
+        const token = localStorage.getItem("auth");
+        let payload = {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const { url } = await fetch(
+          `${process.env.REACT_APP_API_URL}/user/avatarUpload`,
+          payload
+        ).then((res) => res.json());
+ 
+        await fetch(url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "image/jpeg",
+        },
+        body: selectedImage          
+      })
+
+      const avatarUrl = url.split('?')[0]      
+      
+      payload = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          avatar:avatarUrl
+        })
+      }     
+
+      await fetch(
+        `${process.env.REACT_APP_API_URL}/user`,
+        payload
+      )
+    }
+
+    getUrl()
+  }
+    
+  }, [selectedImage]);
   return (
-    <Stack direction="row" alignItems="center" spacing={2}>
-      <label htmlFor="contained-button-file">
-        <Input accept="image/*" id="contained-button-file" multiple type="file" />
-        <Button variant="contained" component="span">
-          Add Profile Picture
-        </Button>
-      </label>
-    </Stack>
+    <div>
+      <h1>Upload Profile</h1>
+      {selectedImage && (
+        <div>
+          <img
+            alt="not fount"
+            width={"250px"}
+            src={URL.createObjectURL(selectedImage)}
+          />
+          <br />
+          <button onClick={() => setSelectedImage(null)}>Remove</button>
+        </div>
+      )}
+      <br />
+
+      <br />
+      <input
+        type="file"
+        name="myImage"
+        onChange={(event) => {
+          console.log(event.target.files[0]);
+          setSelectedImage(event.target.files[0]);
+        }}
+      />
+    </div>
   );
-}
+};
+
+export default UploadAndDisplayImage;
