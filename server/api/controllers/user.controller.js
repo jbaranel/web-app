@@ -1,64 +1,52 @@
-import AWS from "aws-sdk";
 import User from "../models/User.js";
-
-AWS.config.update({ region: "us-east-1" });
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
+import database from "../helpers/db.js";
+import { generateUploadUrl } from "../helpers/upload.js"
 
 const tableName = "users";
 
-export async function getUser (req, res) {
-  const { username } = req.params;
+const db = new database(tableName);
 
-  let params = {
-    Key: {
-      username: username,
-    },
-    TableName: tableName,
-  };
+export async function getUser(req, res) {
+  let { username } = req.user;
 
-  await dynamodb
-    .get(params)
-    .promise()
-    .then((response) => {
-      const user = response?.Item;
-      if (username == user?.username) {
-        //TODO add functions to this class to return different data for api calls ie) User.get, etc.
-        const newUser = new User(
-          user.username,
-          user.password,
-          user.firstName,
-          user.lastName,
-          user.email,
-          user.createdAt,
-          user.following,
-          user.followers
-        );
-        return res.send(newUser);
-      } else {
-        return res.status(400).send({ message: "User not found" });
-      }
-    })
-    .catch((error) => {
-        console.error(error);
-        return res.status(500).send({ message: "An error has occured" });
-    });
-};
+  if (!username) {
+    username = req.user.username
+  }
 
-export async function followUser (req, res) {
+  const user = await db.getUser(username);
+  if (username === user?.username) {
+    const newUser = new User(
+      user.id,
+      user.username,
+      user.password,
+      user.firstName,
+      user.lastName,
+      user.email,
+      user.createdAt,
+      user.following,
+      user.followers,
+      user.avatar
+    );
+    return res.send(newUser);
+  } else {
+    return res.status(400).send({ message: "User not found" });
+  }
+}
+
+export async function followUser(req, res) {
   const { username } = req.user;
   const follow = req.params.username;
 
   //TODO need to rewrite this get user function
-  let user = await getUser(username);
-  let userToFollow = await getUser(follow);
+  let user = await db.getUser(username);
+  let userToFollow = await db.getUser(follow);
 
-  if (userToFollow.message) {
-    return userToFollow;
+  if (!userToFollow) {
+    return res.status(400).send({ message: "User not found" });
   } else if (user.username === userToFollow.username) {
-    return { message: "Cannot follow yourself" };
+    return res.status(400).send({ message: "Cannot follow yourself" });
   } else if (user?.following?.includes(follow)) {
-    return { message: `Already following ${follow}` };
+    return res.status(400).send({ message: `Already following ${follow}` });
   } else {
     if (user.following) {
       user.following = [...user.following, userToFollow.username];
@@ -66,7 +54,7 @@ export async function followUser (req, res) {
       user.following = [userToFollow.username];
     }
     const followingParams = {
-      TableName: "users",
+      TableName: tableName,
       Key: {
         username: user.username,
       },
@@ -76,38 +64,51 @@ export async function followUser (req, res) {
       },
     };
 
-    dynamodb.update(followingParams, function (err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(data);
-      }
-    });
+    db.updateUser(followingParams)
 
-    if (userToFollow.followers) {
-      userToFollow.followers = [...userToFollow.followers, user.username];
-    } else {
-      userToFollow.followers = [user.username];
-    }
-    console.log(userToFollow);
-    const followerParams = {
-      TableName: "users",
-      Key: {
-        username: userToFollow.username,
-      },
-      UpdateExpression: "set followers = :f",
-      ExpressionAttributeValues: {
-        ":f": userToFollow.followers,
-      },
-    };
-
-    dynamodb.update(followerParams, function (err, data) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(data);
-      }
-    });
+    res.send(user)    
   }
-  return user;
-};
+}
+
+export async function updateUser(req, res) {
+  const { firstName, lastName, avatar } = req.body;
+  const {username} = req.user
+  const user = await db.getUser(username)
+
+  if (avatar) {
+    user.avatar = avatar
+  }
+  if (firstName) {
+    user.firstName = firstName
+  }
+  if (lastName) {
+    user.lastName = lastName
+  }
+  const params = {
+    TableName: tableName,
+    Key: {
+      username: user.username,
+    },
+    UpdateExpression: "set firstName = :f, lastName = :l, avatar = :a",
+    ExpressionAttributeValues: {
+      ":f": user.firstName,
+      ":l": user.lastName,
+      ":a": user.avatar,
+    },
+  };
+
+  db.updateUser(params)
+
+  res.send(user)
+}
+
+export async function generateUrl(req, res) {
+  const uploadUrl = await generateUploadUrl()  
+
+  if (uploadUrl) {
+    return res.send({url:uploadUrl})
+  }
+  else {
+    return res.status(500).send()
+  }
+}

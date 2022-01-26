@@ -1,13 +1,17 @@
-import AWS from "aws-sdk";
 import Post from "../models/Post.js";
-import { validateEmail, stringToDate } from "../helpers/utils.js";
+import { stringToDate } from "../helpers/utils.js";
 import { v4 as uuidv4 } from "uuid";
+import database from "../helpers/db.js"
+import AWS from "aws-sdk";
 
 AWS.config.update({ region: "us-east-1" });
+
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const tableName = "posts";
+
+const db = new database(tableName)
 
 //create 
 export async function createPost(req, res) {
@@ -21,21 +25,15 @@ export async function createPost(req, res) {
     Item: newPost,
   };
 
-  dynamodb.put(params, (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).send();
-    } else {
-      res.send(newPost);
-    }
-  });
+  db.putItem(params)
+  res.send(newPost)
 }
 
 //get
 export async function getPost(req, res) {
   const { id } = req.params 
 
-  const item = await getItem(id)
+  const item = await db.getItem(id)
   if (item) {
     return res.send(item)
   }
@@ -54,12 +52,12 @@ export async function deletePost(req, res) {
   const { username } = req.user;
   const id = req.params.id;
 
-  const post = await getItem(id)  
+  const post = await db.getItem(id)  
       if (!post) {
         return res.status(400).send();
       }
       if (post.username === username) {
-        removeFromDB(id);
+        db.removeFromDB(id);
         return res.send({message:"Post deleted"});
       } else {
         return res.status(401).send();
@@ -72,10 +70,10 @@ export async function getAllPosts (req, res) {
     TableName: tableName
   };
   
+  
   await dynamodb.scan(params).promise()
   .then((response) => {
     let posts = response?.Items
-    console.log(posts)
     if (posts) {
       posts.sort(function(a, b) {
         var keyA = a.createdAt,
@@ -95,43 +93,4 @@ export async function getAllPosts (req, res) {
       res.status(500).send()
     }
   })  
-}
-
-function removeFromDB(id) {
-  let params = {
-    TableName: tableName,
-    Key: {
-      id: id,
-    },
-  };
-  dynamodb.delete(params, function (err, data) {
-    if (err) {
-      console.log(err);
-    } else {
-    }
-  });
-}
-
-async function getItem(id) {
-  
-  let params = {
-    Key: {
-      id: id,
-    },
-    TableName: tableName,
-  };
-
-  const result = await dynamodb
-    .get(params)
-    .promise()
-    .then((response) => {
-      const item = response?.Item;
-      if (item) {
-        return item;
-      }
-      else {
-        return {}
-      }
-    })
-  return result
 }

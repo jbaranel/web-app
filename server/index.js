@@ -1,10 +1,9 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import userRoute from './api/routes/user.js'
-import postRoute from './api/routes/post.js'
-import homeRoute from './api/routes/home.js'
-
+import userRoute from './api/routes/user.route.js'
+import postRoute from './api/routes/post.route.js'
+import homeRoute from './api/routes/home.route.js'
 dotenv.config()
 
 const app = express()
