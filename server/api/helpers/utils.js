@@ -33,3 +33,13 @@ export const sortDates = (dates) => {
   });
   return dates
 }
+
+export const getCurrentTimestamp = () => {
+  const date = new Date()
+  const timestamp = date.toISOString().slice(0, 19).replace('T', ' ');
+  return timestamp
+}
+
+export const getLocalTime = (timestamp) => {
+  return timestamp
+}
