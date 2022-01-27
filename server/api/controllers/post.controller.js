@@ -1,39 +1,32 @@
-import Post from "../models/Post.js";
-import { stringToDate } from "../helpers/utils.js";
+import { getCurrentTimestamp } from "../helpers/utils.js";
 import { v4 as uuidv4 } from "uuid";
-import {Database , user} from "../helpers/db.js";
-import AWS from "aws-sdk";
-
-AWS.config.update({ region: "us-east-1" });
-
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
-const tableName = "posts";
-
-const db = new Database(tableName)
+import { getPostById, deletePostById, getAllPosts, insertPost } from "../services/post.service.js"
+import { getUserByUsername } from "../services/user.service.js"
 
 //create 
 export async function createPost(req, res) {
   const { username } = req.user;
-  const post = req.body.post;
+  const {user_id} = await getUserByUsername(username)
+
+  const post_body = req.body.post;
   const id = uuidv4();
 
-  const newPost = new Post(id, username, Date.now(), post);
-  let params = {
-    TableName: tableName,
-    Item: newPost,
-  };
-
-  db.putItem(params)
-  res.send(newPost)
+  const post = {
+      post_id :id,
+      user_id: user_id,
+      post: post_body,
+      created_at: getCurrentTimestamp()
+    }
+  
+  const response = await insertPost(post)
+  res.send(response)
 }
 
 //get
 export async function getPost(req, res) {
   const { id } = req.params 
 
-  const item = await db.getItem(id)
+  const item = await getPostById(id)
   if (item) {
     return res.send(item)
   }
@@ -52,45 +45,24 @@ export async function deletePost(req, res) {
   const { username } = req.user;
   const id = req.params.id;
 
-  const post = await db.getItem(id)  
-      if (!post) {
-        return res.status(400).send();
-      }
-      if (post.username === username) {
-        db.removeFromDB(id);
-        return res.send({message:"Post deleted"});
-      } else {
-        return res.status(401).send();
-      }    
+  const post = await getPostById(id)  
+    if (!post) {
+      return res.status(400).send();
+    }
+    if (post.username === username) {
+      deletePostById(id);
+      return res.send({message:"Post deleted"});
+    } else {
+      return res.status(401).send();
+    }    
 }
 
-
-export async function getAllPosts (req, res) {
-  let params = {             
-    TableName: tableName
-  };
-  
-  
-  await dynamodb.scan(params).promise()
-  .then((response) => {
-    let posts = response?.Items
-    if (posts) {
-      posts.sort(function(a, b) {
-        var keyA = a.createdAt,
-        keyB = b.createdAt;
-        // Compare the 2 dates
-        if (keyA > keyB) return -1;
-        if (keyA < keyB) return 1;
-        return 0;
-      });
-      
-      posts.forEach((post) => {
-        post.createdAt = stringToDate(post.createdAt)
-      })
-      res.send({posts})    
-    }
-    else {
-      res.status(500).send()
-    }
-  })  
+export async function getPosts (req, res) {
+  const posts = await getAllPosts()  
+  if (posts){
+    res.send(posts)    
+  }
+  else {
+    res.status(201).send()
+  }
 }

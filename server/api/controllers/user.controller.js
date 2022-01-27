@@ -1,10 +1,6 @@
-import User from "../models/User.js";
-import {Database , queryUser} from "../helpers/db.js";
+import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery} from "../services/user.service.js";
 import { generateUploadUrl } from "../helpers/upload.js"
-
-const tableName = "users";
-
-const db = new Database(tableName);
+import { getCurrentTimestamp } from "../helpers/utils.js";
 
 export async function getUser(req, res) {
   let { username } = req.params;
@@ -13,21 +9,14 @@ export async function getUser(req, res) {
     username = req.user.username
   }
   
-  const user = await queryUser(username);
+  const user = await getUserByUsername(username);
+
   if (username === user?.username) {
-    const newUser = new User(
-      user.id,
-      user.username,
-      user.password,
-      user.firstName,
-      user.lastName,
-      user.email,
-      user.createdAt,
-      user.following,
-      user.followers,
-      user.avatar
-    );
-    return res.send(newUser);
+    const returnUser = (user) => {
+      delete user.password
+      return user
+    }
+    return res.send(returnUser(user));
   } else {
     return res.status(400).send({ message: "User not found" });
   }
@@ -37,69 +26,58 @@ export async function followUser(req, res) {
   const { username } = req.user;
   const follow = req.params.username;
 
-  //TODO need to rewrite this get user function
-  let user = await db.getUser(username);
-  let userToFollow = await db.getUser(follow);
-
+  let user = await getUserByUsername(username);
+  let userToFollow = await getUserByUsername(follow);
+  
   if (!userToFollow) {
-    return res.status(400).send({ message: "User not found" });
+    return res.status(404).send({ message: "User not found" });
   } else if (user.username === userToFollow.username) {
     return res.status(400).send({ message: "Cannot follow yourself" });
-  } else if (user?.following?.includes(follow)) {
-    return res.status(400).send({ message: `Already following ${follow}` });
   } else {
-    if (user.following) {
-      user.following = [...user.following, userToFollow.username];
-    } else {
-      user.following = [userToFollow.username];
+
+    const follow = {
+      follower_id: user.user_id, 
+      following_id: userToFollow.user_id,
+      created_at: getCurrentTimestamp()
     }
-    const followingParams = {
-      TableName: tableName,
-      Key: {
-        username: user.username,
-      },
-      UpdateExpression: "set following = :f",
-      ExpressionAttributeValues: {
-        ":f": user.following,
-      },
-    };
-
-    db.updateUser(followingParams)
-
-    res.send(user)    
+    
+    const response = await addNewFollower(follow)
+    if (response[0] === 0) {
+      res.send({message:"Success"})    
+    }
+    else {
+      res.status(400).send({message: "Error"})
+    }
   }
 }
 
+export async function getFollowers(req, res) {
+  const {username} = req.params
+  const followers = await getFollowersByUsername(username)
+  res.send(followers)
+}
+
 export async function updateUser(req, res) {
-  const { firstName, lastName, avatar } = req.body;
+  const { firstName, lastName, avatar_url } = req.body;
   const {username} = req.user
-  const user = await db.getUser(username)
 
-  if (avatar) {
-    user.avatar = avatar
-  }
-  if (firstName) {
-    user.firstName = firstName
-  }
-  if (lastName) {
-    user.lastName = lastName
-  }
-  const params = {
-    TableName: tableName,
-    Key: {
-      username: user.username,
-    },
-    UpdateExpression: "set firstName = :f, lastName = :l, avatar = :a",
-    ExpressionAttributeValues: {
-      ":f": user.firstName,
-      ":l": user.lastName,
-      ":a": user.avatar,
-    },
-  };
+  const user = await getUserByUsername(username);
 
-  db.updateUser(params)
-
-  res.send(user)
+  const update = (user) => {
+    if (firstName) {
+      user.firstName = firstName
+    }
+    if (lastName) {
+      user.lastName = lastName
+    }
+    if (avatar_url) {
+      user.avatar_url = avatar_url
+    }
+    return user
+  }
+  const response = await updateUserQuery(update(user))
+  
+  res.send(response)
 }
 
 export async function generateUrl(req, res) {

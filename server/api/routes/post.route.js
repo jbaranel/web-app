@@ -1,12 +1,12 @@
 import express from "express"
-import { createPost, getPost, updatePost, deletePost, getAllPosts } from '../controllers/post.controller.js'
+import { createPost, getPost, updatePost, deletePost, getPosts } from '../controllers/post.controller.js'
 import auth from "../middleware/auth.js"
 
 const router = express.Router()
 
 router.post('/create', auth, createPost)
 
-router.get('/all', auth, getAllPosts)
+router.get('/all', auth, getPosts)
 
 router.get('/:id', auth, getPost)
 

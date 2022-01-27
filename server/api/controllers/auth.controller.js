@@ -2,7 +2,7 @@ import { validateEmail, getCurrentTimestamp } from "../helpers/utils.js";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken"
-import {queryUser, insertUser} from "../helpers/db.js";
+import { getUserByUsername } from "../services/user.service.js";
 
 export async function createUser(req, res) {
   const { username, password, firstName, lastName, email } = req.body;
@@ -18,7 +18,7 @@ export async function createUser(req, res) {
   //should use async/await function here
   const hashedPassword = bcrypt.hashSync(password, salt)
 
-  const user = await queryUser(username);
+  const user = await getUserByUsername(username);
 
   if (user?.username) {
     return res.status(400).send({ message: "Username already exists" });
@@ -33,10 +33,10 @@ export async function createUser(req, res) {
       } else if (!validateEmail(email)) {
         return res.status(400).send({ message: "Enter a valid email address" });
       } else {
-        const id = uuidv4()
+        const user_id = uuidv4()
 
         const user = {
-          user_id :id,
+          user_id: user_id,
           username: username,
           password: hashedPassword,
           email: email,
@@ -66,10 +66,10 @@ export async function login(req, res) {
   if (!username || !password) {
     return res.status(400).send({ message: "Missing username/password" });
   }
-  const user = await queryUser(username);
+  const user = await getUserByUsername(username);
 
   if (!user?.username) {
-    return res.status(400).send({ message: "User does not exist" });
+    return res.status(404).send({ message: "User does not exist" });
   } else {
     bcrypt.compare(password, user.password, (error, response) => {
       if (response) {
