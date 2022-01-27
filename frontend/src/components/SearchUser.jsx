@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
@@ -25,8 +25,11 @@ function SearchUser() {
     event.preventDefault();
     getUser()
     console.log(user)
+  }
 
-};
+    useEffect(() => {
+      getUser()
+    }, [searchUser])
 
   return (
     <div>

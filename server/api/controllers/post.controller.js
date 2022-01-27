@@ -19,7 +19,7 @@ export async function createPost(req, res) {
     }
   
   const response = await insertPost(post)
-  res.send(response)
+  res.status(201).send(response)
 }
 
 //get

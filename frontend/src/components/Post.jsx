@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import { Avatar } from "@mui/material";
 import { Typography } from "@mui/material";
 import LikeButton from "./LikeButton";
@@ -7,10 +7,12 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import DeleteIcon from "@mui/icons-material/Delete";
+import {FeedContext} from "../pages/Feed"
 
 function Post({ post }) {
   const [userLiked, setUserliked] = useState(false);
   const [likecount, setLikecount] = useState(post.likes);
+  const { setPosts } = useContext(FeedContext)
 
   const updateLikes = () => {
     if (userLiked) {
@@ -37,7 +39,7 @@ function Post({ post }) {
         }),
       };
       let response = fetch(
-        `${process.env.REACT_APP_API_URL}/post/${post.id}`,
+        `${process.env.REACT_APP_API_URL}/post/${post.post_id}`,
         payload
       )
         .then((res) => res.json())
@@ -57,15 +59,15 @@ function Post({ post }) {
       <div className="border border-top-0 p-3">
         <div className="d-flex flex-row mb-2 align-items-center">
           <div className="mx-2">
-            {post.avatar ? (
+            {post.avatar_url ? (
               <Avatar
                 alt="Profile Picture"
-                src={post.avatar}
+                src={post.avatar_url}
                 sx={{ width: 52, height: 52 }}
               />
             ) : (
               <Avatar sx={{ bgcolor: "grey" }}>
-                {JSON.stringify(post.username).charAt(1).toUpperCase()}
+                {JSON.stringify(post.username)}
               </Avatar>
             )}
           </div>
@@ -93,7 +95,7 @@ function Post({ post }) {
           {post.post}
         </Typography>
         <Typography variant="caption" display="block" gutterBottom>
-          {post.createdAt}
+          {post.created_at}
         </Typography>
         <IconButton aria-label="Vote for this event" onClick={updateLikes}>
           {userLiked ? (

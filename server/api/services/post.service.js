@@ -31,11 +31,14 @@ export async function deletePostById (id) {
 }
 
 export async function getAllPosts () {
+  //TODO need to fix this query
     const database = await connection()
     let res;
     try {
-      res = await database("Post").select()
-      console.log(res)
+      res = await database('Post')
+      .join('User', 'Post.user_id', '=', 'User.user_id')
+      .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
+      
     }
     catch (err) {
       console.log(err)
@@ -43,7 +46,7 @@ export async function getAllPosts () {
     finally {
       database.destroy()
     }
-    return res[0]
+    return res
 }
 
 export async function insertPost (post) {
@@ -58,5 +61,5 @@ export async function insertPost (post) {
     finally {
       database.destroy()
     }
-    return res
+    return post
 }

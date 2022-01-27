@@ -1,8 +1,10 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, createContext } from "react";
 import Post from "../components/Post";
 import Container from "react-bootstrap/esm/Container";
 import CreatePost from "../components/CreatePost";
 import Loading from "../components/Loading"
+
+export const FeedContext = createContext(null);
 
 export default function Feed() {
   const [posts, setPosts] = useState([]);
@@ -25,7 +27,7 @@ export default function Feed() {
     )
     .then((res) => res.json())
     .then((data) => {
-      setPosts(data.posts)       
+      setPosts(data)       
   }).catch((error) => {
     alert("Cannot get posts")
   }) 
@@ -36,15 +38,15 @@ export default function Feed() {
   }, [])
 
   return (
-    <div>
+    <FeedContext.Provider value={{posts, setPosts}}>
       <Container>
-        <CreatePost setPosts={setPosts} />        
+        <CreatePost />        
         {isLoading ?
         <Loading/>
         : posts.map((post, index) => {
-          return <Post key={index} post={post} />;
+          return <Post value={{setPosts}} key={index} post={post} />;
         })}
       </Container>
-    </div>
+    </FeedContext.Provider>
   );
 }

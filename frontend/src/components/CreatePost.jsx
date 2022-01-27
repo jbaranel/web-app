@@ -1,10 +1,12 @@
-import { React, useState } from "react";
+import { React, useState, useContext } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { stringToDate } from '../utils.js'
+import {FeedContext} from "../pages/Feed"
 
-function CreatePost(props) {
+function CreatePost() {
   const [post, setPost] = useState("");  
+  const { setPosts } = useContext(FeedContext)
 
   function handleSubmit(event) {
     
@@ -33,8 +35,7 @@ function CreatePost(props) {
           if (data.message) {
               console.log(data.message)
           } else {                 
-              data.createdAt = stringToDate(data.createdAt)
-              props.setPosts(arr => [data, ...arr]) 
+              setPosts(arr => [data, ...arr]) 
               setPost("");
           }
         });
@@ -57,7 +58,9 @@ function CreatePost(props) {
             onChange={(e) => setPost(e.target.value)}
           />
         </Form.Group>
-        <Button type="submit">Create Post</Button>
+        {post ? <Button type="submit">Create Post</Button>
+        : 
+        <Button type="submit" disabled>Create Post</Button>}
       </Form>
     </div>
   );
