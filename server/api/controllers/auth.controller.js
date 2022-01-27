@@ -1,20 +1,8 @@
-import AWS from "aws-sdk";
-import User from "../models/User.js";
 import { validateEmail, getCurrentTimestamp } from "../helpers/utils.js";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken"
-import {Database , queryUser, insertUser} from "../helpers/db.js";
-import e from "express";
-
-const tableName = "users";
-
-const db = new Database(tableName)
-
-AWS.config.update({ region: "us-east-1" });
-
-const dynamodb = new AWS.DynamoDB.DocumentClient();
-
+import {queryUser, insertUser} from "../helpers/db.js";
 
 export async function createUser(req, res) {
   const { username, password, firstName, lastName, email } = req.body;
