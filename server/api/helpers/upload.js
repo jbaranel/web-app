@@ -1,9 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import AWS from "aws-sdk";
-import dotenv from 'dotenv'
-dotenv.config()
+import config from "../../config.js"
 
-const BUCKET_NAME = process.env.AVATAR_BUCKET
+const BUCKET_NAME = config.AVATAR_BUCKET
 
 const s3 = new AWS.S3({
   region: process.env.AWS_REGION,

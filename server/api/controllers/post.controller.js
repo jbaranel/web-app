@@ -1,7 +1,7 @@
 import Post from "../models/Post.js";
 import { stringToDate } from "../helpers/utils.js";
 import { v4 as uuidv4 } from "uuid";
-import database from "../helpers/db.js"
+import {Database , user} from "../helpers/db.js";
 import AWS from "aws-sdk";
 
 AWS.config.update({ region: "us-east-1" });
@@ -11,7 +11,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 const tableName = "posts";
 
-const db = new database(tableName)
+const db = new Database(tableName)
 
 //create 
 export async function createPost(req, res) {

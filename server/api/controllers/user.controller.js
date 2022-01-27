@@ -1,19 +1,19 @@
 import User from "../models/User.js";
-import database from "../helpers/db.js";
+import {Database , queryUser} from "../helpers/db.js";
 import { generateUploadUrl } from "../helpers/upload.js"
 
 const tableName = "users";
 
-const db = new database(tableName);
+const db = new Database(tableName);
 
 export async function getUser(req, res) {
-  let { username } = req.user;
+  let { username } = req.params;
 
   if (!username) {
     username = req.user.username
   }
-
-  const user = await db.getUser(username);
+  
+  const user = await queryUser(username);
   if (username === user?.username) {
     const newUser = new User(
       user.id,

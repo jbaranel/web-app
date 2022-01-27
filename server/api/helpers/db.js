@@ -1,8 +1,9 @@
 import AWS from "aws-sdk";
 
 AWS.config.update({ region: "us-east-1" });
+import { connection } from "../helpers/db_connector.js"
 
-export default class Database {
+export class Database {
   constructor (tableName) {
     this.dynamodb = new AWS.DynamoDB.DocumentClient();
     this.tableName = tableName
@@ -89,4 +90,36 @@ export default class Database {
     });
 
   }
+}
+
+export function user ( ){}
+
+export async function queryUser (username) {
+  const database = await connection()
+  let res;
+  try {
+    res = await database.select().from("User").where({ username: username })
+  }
+  catch (err) {
+    console.log(err)
+  }
+  finally {
+    database.destroy()
+  }
+  return res[0]
+}
+
+export async function insertUser (user) {
+  const database = await connection()
+  let res;
+  try {
+    res = await database('User').insert(user)
+  }
+  catch (err) {
+    console.log(err)
+  }
+  finally {
+    database.destroy()
+  }
+  return res
 }
