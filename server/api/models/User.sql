@@ -6,5 +6,5 @@ create table Web_App.User (
     lastName VARCHAR(64),
     email VARCHAR(64) UNIQUE NOT NULL,
     created_at TIMESTAMP,
-    avatarUrl CHAR (88)
+    avatar_url CHAR (88)
 );
