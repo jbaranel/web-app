@@ -38,7 +38,7 @@ const UploadAndDisplayImage = () => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          avatar:avatarUrl
+          avatar_url:avatarUrl
         })
       }     
 

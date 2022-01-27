@@ -35,9 +35,9 @@ function ProfileCard() {
         :
         <>
             <h1>{user.firstName} {user.lastName}</h1>
-            <Avatar alt="Profile Picture" src={user.avatar} sx={{ width: 128, height: 128 }}/>
+            <Avatar alt="Profile Picture" src={user.avatar_url} sx={{ width: 128, height: 128 }}/>
             <ul>
-                Following: {user.following.map((follow, index) => {return <li key={index}>{follow}</li>})}
+                {/* Following: {user.following.map((follow, index) => {return <li key={index}>{follow}</li>})} */}
             </ul>
         </>}          
   </div>;
