@@ -7,10 +7,12 @@ import InputGroup from "react-bootstrap/InputGroup";
 import Alert from "react-bootstrap/Alert";
 import Loading from "./Loading";
 import MainHeader from "./MainHeader";
+import { useNavigate } from "react-router-dom";
 
 //TODO need to add password in frontend and api
 
 const RegisterForm = () => {
+  const navigate = useNavigate()
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -65,6 +67,7 @@ const RegisterForm = () => {
               localStorage.setItem("auth", data.accessToken)
             }
             setIsLoading(false);
+            navigate("/home")
           });
       } catch (error) {
         setError(error);

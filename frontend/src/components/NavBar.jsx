@@ -4,12 +4,14 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Avatar from "@mui/material/Avatar"
 import Button from "react-bootstrap/Button"
-
+import { useNavigate } from "react-router-dom";
 export default function NavBar() {
 
+  const navigate = useNavigate()
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem("auth")
+    navigate("/login")
   } 
   
   return (

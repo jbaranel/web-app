@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
@@ -6,6 +7,7 @@ import Loading from "./Loading";
 import MainHeader from "./MainHeader";
 
 const LoginForm = () => {
+  const navigate = useNavigate()
   const [username, setUsername] = useState("");  
   const [password, setPassword] = useState("");  
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +53,7 @@ const LoginForm = () => {
             localStorage.setItem("auth", data.accessToken)
           }
           setIsLoading(false);
+          navigate("/home");
         });
       } catch (error) {
         setError(error);
