@@ -27,11 +27,5 @@ export const SidebarData = [
     path: '/profile',
     icon: <IoIcons.IoMdPerson />,
     cName: 'nav-text'
-  },
-  {
-    title: 'Logout',
-    path: '/login',
-    icon: <IoIcons.IoIosLogOut />,
-    cName: 'nav-text'
   }
 ];

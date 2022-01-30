@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React, { useState } from "react";
 import { useEffect } from "react";
 
@@ -53,8 +54,10 @@ const UploadAndDisplayImage = () => {
     
   }, [selectedImage]);
   return (
-    <div>
-      <h1>Upload Profile</h1>
+    <div className="mt-3">
+      <Typography variant="subtitle">
+        Upload Profile Picture
+      </Typography>
       {selectedImage && (
         <div>
           <img

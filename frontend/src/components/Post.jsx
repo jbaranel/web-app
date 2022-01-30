@@ -1,18 +1,16 @@
 import { React, useState, useContext } from "react";
-import { Avatar } from "@mui/material";
-import { Typography } from "@mui/material";
-import LikeButton from "./LikeButton";
-import IconButton from "@mui/material/IconButton";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { useNavigate } from "react-router-dom";
 import {FeedContext} from "../pages/Feed"
+import PostHeader from "./Post/Header"
+import PostFooter from "./Post/Footer"
+import PostBody from "./Post/Body"
+import PostTimestamp from "./Post/Timestamp"
 
 function Post({ post }) {
   const [userLiked, setUserliked] = useState(false);
   const [likecount, setLikecount] = useState(post.likes);
-  const { setPosts } = useContext(FeedContext)
+  const setPosts = useContext(FeedContext)
+  const navigate = useNavigate()
 
   const updateLikes = () => {
     if (userLiked) {
@@ -24,6 +22,10 @@ function Post({ post }) {
     }
     return;
   };
+
+  const handleClick = () => {
+    navigate(`/post/${post.post_id}`)    
+  }
 
   const deletePost = () => {
     const token = localStorage.getItem("auth")
@@ -56,61 +58,13 @@ function Post({ post }) {
 
   return (
     <div>
-      <div className="border border-top-0 p-3">
-        <div className="d-flex flex-row mb-2 align-items-center">
-          <div className="mx-2">
-            {post.avatar_url ? (
-              <Avatar
-                alt="Profile Picture"
-                src={post.avatar_url}
-                sx={{ width: 52, height: 52 }}
-              />
-            ) : (
-              <Avatar sx={{ bgcolor: "grey" }}>
-                {JSON.stringify(post.username)}
-              </Avatar>
-            )}
-          </div>
-          <div className="mx-2">
-            <Typography
-              className="m-0"
-              variant="h5"
-              gutterBottom
-              component="div"
-            >
-              @{post.username}
-            </Typography>
-          </div>
-          <div className="ml-auto p-2">
-            {true ? (
-              <IconButton>
-                <MoreHorizIcon />
-              </IconButton>
-            ) : (
-              <>Not user</>
-            )}
-          </div>
+      <div className="border border-top-0 p-3">        
+        <PostHeader username={post.username} avatar_url={post.avatar_url}/>        
+        <div onClick={handleClick}>
+          <PostBody body={post.post}/>  
+          <PostTimestamp timestamp={post.created_at}/>                  
         </div>
-        <Typography variant="body1" gutterBottom>
-          {post.post}
-        </Typography>
-        <Typography variant="caption" display="block" gutterBottom>
-          {post.created_at}
-        </Typography>
-        <IconButton aria-label="Vote for this event" onClick={updateLikes}>
-          {userLiked ? (
-            <FavoriteIcon style={{ color: "red" }} />
-          ) : (
-            <FavoriteBorderIcon style={{ fill: "red" }} />
-          )}
-        </IconButton>
-        <Typography variant="body2" gutterBottom>
-          Likes:{likecount}
-        </Typography>
-
-        <IconButton onClick={deletePost}>
-          <DeleteIcon />
-        </IconButton>
+        <PostFooter/>        
       </div>
     </div>
   );

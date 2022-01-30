@@ -22,16 +22,11 @@ const convertToLocalDate = (date) => {
   return (time + " " + day)  
 }
 
-export const sortDates = (dates) => {
-  dates.sort(function(a, b) {
-    var keyA = new Date(a.updated_at),
-      keyB = new Date(b.updated_at);
-    // Compare the 2 dates
-    if (keyA < keyB) return -1;
-    if (keyA > keyB) return 1;
-    return 0;
+export const sortDates = (array) => {
+  array.sort(function(a, b) {    
+    return new Date(b.created_at) - new Date(a.created_at);
   });
-  return dates
+  return array
 }
 
 export const getCurrentTimestamp = () => {

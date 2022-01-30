@@ -6,7 +6,7 @@ import { Avatar } from '@mui/material';
 function UserCard({ user }) {       
 
   return <div>
-      <Card>
+      <Card className="p-2">
         <div className="d-flex flex-row mb-2 align-items-center">
           <div className="mx-2">
             {user.avatar_url ? (

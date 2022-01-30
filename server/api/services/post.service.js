@@ -4,7 +4,10 @@ export async function getPostById (id) {
     const database = await connection()
     let res;
     try {
-      res = await database.select().from("Post").where({ post_id: id })
+      res = await database('Post')
+        .join('User', 'Post.user_id', '=', 'User.user_id')
+        .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
+        .where('Post.post_id', '=', `${id}`)          
     }
     catch (err) {
       console.log(err)
@@ -14,6 +17,27 @@ export async function getPostById (id) {
     }
     return res[0]
   }
+  
+  export async function getPostCommentsById (id) {
+    const database = await connection()
+    let res;
+    try {
+      res = await database('Comments')
+      .join('User', 'User.user_id', '=', 'Comments.user_id')
+      .select('Comments.comment_id', 'User.user_id', 'Comments.created_at', 'Comments.comment', 'User.username', 'User.avatar_url' )
+      .where('Comments.post_id', '=', `${id}`)    
+      
+      database.select().from("Comments").where({ post_id: id })
+    }
+    catch (err) {
+      console.log(err)
+    }
+    finally {
+      database.destroy()
+    }
+    return res
+  }
+
 
 export async function deletePostById (id) {
     const database = await connection()
@@ -62,4 +86,37 @@ export async function insertPost (post) {
       database.destroy()
     }
     return post
+}
+
+export async function insertComment (comment) {
+  const database = await connection()
+  let res;
+  try {
+    res = await database('Comments').insert(comment)
+  }
+  catch (err) {
+    console.log(err)
+  }
+  finally {
+    database.destroy()
+  }
+  return comment
+}
+
+export async function getPostsByUserId (user_id) {  
+  const database = await connection()
+  let res;
+  try {
+    res = await database('Post')
+      .join('User', 'Post.user_id', '=', 'User.user_id')
+      .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
+      .where('User.user_id', '=', `${user_id}`)          
+  }
+  catch (err) {
+    console.log(err)
+  }
+  finally {
+    database.destroy()
+  }
+  return res
 }
