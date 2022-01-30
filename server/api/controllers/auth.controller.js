@@ -2,7 +2,7 @@ import { validateEmail, getCurrentTimestamp } from "../helpers/utils.js";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken"
-import { getUserByUsername } from "../services/user.service.js";
+import { getUserByUsername, insertUser } from "../services/user.service.js";
 
 export async function createUser(req, res) {
   const { username, password, firstName, lastName, email } = req.body;

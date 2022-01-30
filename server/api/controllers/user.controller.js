@@ -1,4 +1,4 @@
-import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery} from "../services/user.service.js";
+import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery, searchUserByUsername} from "../services/user.service.js";
 import { generateUploadUrl } from "../helpers/upload.js"
 import { getCurrentTimestamp } from "../helpers/utils.js";
 
@@ -89,4 +89,11 @@ export async function generateUrl(req, res) {
   else {
     return res.status(500).send()
   }
+}
+
+//TODO will need to change this implementaion at some point, just a poc for now.
+export async function searchUsername(req, res) {
+  const {username} = req.params
+  const users = await searchUserByUsername(username)
+  res.send(users)
 }

@@ -1,9 +1,11 @@
 import React from 'react';
 import UploadButton from '../components/UploadButton';
 import ProfileCard from '../components/ProfileCard'
+import "../components/styles/Main.css"
+
 function Profile() {
 
-  return <div>
+  return <div className="main-container">
     <ProfileCard/>
     <UploadButton/>
   </div>;

@@ -50,7 +50,7 @@ function CreatePost() {
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
           <Form.Label>
-            <h3>Enter Post</h3>
+            <h3>What's on your mind?</h3>
           </Form.Label>
           <Form.Control
             as="textarea"

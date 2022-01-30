@@ -16,6 +16,21 @@ export async function getUserByUsername (username) {
     return res[0]
   }
   
+  export async function searchUserByUsername (username) {
+    const database = await connection()
+    let res;
+    try {
+      res = await database.select('username', 'avatar_url', 'firstName', 'lastName').from("User").where('username', 'like', `%${username}%`)
+    }
+    catch (err) {
+      console.log(err)
+    }
+    finally {
+      database.destroy()
+    }
+    return res
+  }
+
   export async function getFollowersByUsername (username) {
     const database = await connection()
     let res;
