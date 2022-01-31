@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import AWS from "aws-sdk";
-import config from "../../config.js"
+import { CreateBucketRequest, BucketName } from 'aws-sdk/clients/s3';
+import config from "../../config"
 
-const BUCKET_NAME = config.AVATAR_BUCKET
+const BUCKET_NAME: BucketName = 'user-avatar-profile-photos'
+//config.AVATAR_BUCKET
 
 const s3 = new AWS.S3({
   region: process.env.AWS_REGION,
@@ -11,7 +13,7 @@ const s3 = new AWS.S3({
 });
 
 function createBucket() {
-  const params = {
+  const params: CreateBucketRequest = {
     Bucket: BUCKET_NAME,
   };
 

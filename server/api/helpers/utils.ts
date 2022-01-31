@@ -8,7 +8,7 @@ export const validateEmail = (email) => {
 
 export const stringToDate = (unixString) => {
   const unixTime = parseInt(unixString);
-  let date = new Date(unixTime)  
+  let date: any = new Date(unixTime)  
   date = convertToLocalDate(date)
   return date
 }
@@ -22,9 +22,11 @@ const convertToLocalDate = (date) => {
   return (time + " " + day)  
 }
 
-export const sortDates = (array) => {
-  array.sort(function(a, b) {    
-    return new Date(b.created_at) - new Date(a.created_at);
+export const sortDates = (array: any) => {
+  array.sort(function(a: any, b: any) {
+    const d1: any = new Date(b.created_at)
+    const d2: any = new Date(a.created_at)
+    return d1 - d2;
   });
   return array
 }

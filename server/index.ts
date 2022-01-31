@@ -1,9 +1,9 @@
 import express from 'express'
 import cors from 'cors'
-import userRoute from './api/routes/user.route.js'
-import postRoute from './api/routes/post.route.js'
-import homeRoute from './api/routes/home.route.js'
-import config from './config.js'
+import userRoute from './api/routes/user.route'
+import postRoute from './api/routes/post.route'
+import homeRoute from './api/routes/home.route'
+import config from './config'
 
 const app = express()
 const port = config.PORT || 3001

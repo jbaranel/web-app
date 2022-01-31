@@ -1,6 +1,6 @@
-import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery, searchUserByUsername, getFollowingByUsername} from "../services/user.service.js";
-import { generateUploadUrl } from "../helpers/upload.js"
-import { getCurrentTimestamp } from "../helpers/utils.js";
+import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery, searchUserByUsername, getFollowingByUsername} from "../services/user.service";
+import { generateUploadUrl } from "../helpers/upload"
+import { getCurrentTimestamp } from "../helpers/utils";
 
 export async function getUser(req, res) {
   let { username } = req.params;

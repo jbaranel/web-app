@@ -1,7 +1,7 @@
 
-import { connection } from "../helpers/db_connector.js"
+import { connection } from "../helpers/db_connector"
 
-export async function getUserByUsername (username) {
+export async function getUserByUsername (username: string) {
     const database = await connection()
     let res;
     try {
@@ -16,7 +16,7 @@ export async function getUserByUsername (username) {
     return res[0]
   }
   
-  export async function searchUserByUsername (username) {
+  export async function searchUserByUsername (username: string) {
     const database = await connection()
     let res;
     try {
@@ -31,7 +31,7 @@ export async function getUserByUsername (username) {
     return res
   }
 
-  export async function getFollowersByUsername (username) {
+  export async function getFollowersByUsername (username: string) {
     const database = await connection()
     let res;
     try {
@@ -58,7 +58,7 @@ export async function getUserByUsername (username) {
     return res[0]
   }
 
-  export async function getFollowingByUsername (username) {
+  export async function getFollowingByUsername (username: string) {
     const database = await connection()
     let res;
     try {

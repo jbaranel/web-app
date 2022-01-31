@@ -1,7 +1,7 @@
-import { getCurrentTimestamp, sortDates } from "../helpers/utils.js";
+import { getCurrentTimestamp, sortDates } from "../helpers/utils";
 import { v4 as uuidv4 } from "uuid";
-import { getPostById, deletePostById, getAllPosts, insertPost, getPostCommentsById, insertComment, getPostsByUserId } from "../services/post.service.js"
-import { getUserByUsername } from "../services/user.service.js"
+import { getPostById, deletePostById, getAllPosts, insertPost, getPostCommentsById, insertComment, getPostsByUserId } from "../services/post.service"
+import { getUserByUsername } from "../services/user.service"
 
 //create 
 export async function createPost(req, res) {
@@ -85,12 +85,20 @@ export async function commentOnPost (req, res) {
     post_id: id,
     user_id: user_id,
     created_at: getCurrentTimestamp(),
-    comment: comment
+    comment: comment,
   }  
+  
   const response = await insertComment(newComment)
-  newComment.username = username,
-  newComment.avatar_url = user.avatar_url
-  return  res.send(newComment)  
+  let c = {
+    comment_id: uuidv4(),
+    post_id: id,
+    user_id: user_id,
+    created_at: getCurrentTimestamp(),
+    comment: comment,
+    username: username,
+    avatar_url: user.avatar_url
+  }    
+  return  res.send(c)  
 }
 
 export async function getUserPosts (req, res) {

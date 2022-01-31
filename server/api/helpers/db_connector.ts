@@ -1,5 +1,5 @@
 import knex from "knex"
-import config from "../../config.js"
+import config from "../../config"
 
 export async function connection () {
   const database =  knex({

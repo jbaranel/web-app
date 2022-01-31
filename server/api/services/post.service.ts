@@ -1,4 +1,4 @@
-import { connection } from "../helpers/db_connector.js"
+import { connection } from "../helpers/db_connector"
 
 export async function getPostById (id) {
     const database = await connection()
