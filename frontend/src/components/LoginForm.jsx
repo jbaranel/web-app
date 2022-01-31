@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import Loading from "./Loading";
 import MainHeader from "./MainHeader";
+import API from "../apiHelper"
 
 const LoginForm = () => {
   const navigate = useNavigate()
@@ -28,36 +29,22 @@ const LoginForm = () => {
     } else {
       setError(null);
       setIsLoading(true);
-      try {
-        let payload = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "username":username,
-            "password":password
-          })          
-        };
-        await fetch(
-          `${process.env.REACT_APP_API_URL}/login`,
-          payload
-        )
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.message) {
-            setError(data.message);
-          } else {
-            setApiData(data);
-            setSuccess(true);            
-            localStorage.setItem("auth", data.accessToken)
-          }
-          setIsLoading(false);
-          navigate("/home");
-        });
-      } catch (error) {
-        setError(error);
+      const body= JSON.stringify({
+        "username":username,
+        "password":password
+      })   
+      const response = await API.POST('login', body)
+      if (response) {
+        if (response.message) {
+          setError(response.message);
+        } else {
+          setApiData(response);
+          setSuccess(true);            
+          localStorage.setItem("auth", response.accessToken)
+          localStorage.setItem("user", JSON.stringify(response.user))
+        }
         setIsLoading(false);
+        navigate("/home");
       }
     }
   }

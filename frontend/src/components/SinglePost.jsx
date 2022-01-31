@@ -6,6 +6,7 @@ import PostHeader from "./Post/Header";
 import PostFooter from "./Post/Footer";
 import PostBody from "./Post/Body";
 import Card from "react-bootstrap/Card"
+
 function SinglePost({ post }) {
   return (
     <div>
@@ -13,7 +14,7 @@ function SinglePost({ post }) {
         <PostHeader username={post.username} avatar_url={post.avatar_url} />
         <PostBody body={post.post} />
         <PostTimestamp timestamp={post.created_at} />
-        <PostFooter/>
+        <PostFooter/>        
       </Card>
     </div>
   );

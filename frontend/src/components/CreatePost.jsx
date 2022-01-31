@@ -3,45 +3,24 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { stringToDate } from '../utils.js'
 import {FeedContext} from "../pages/Feed"
-
+import API from "../apiHelper"
 function CreatePost() {
   const [post, setPost] = useState("");  
-  const { setPosts } = useContext(FeedContext)
-
-  function handleSubmit(event) {
-    
-
+  const { posts, setPosts } = useContext(FeedContext)
+  
+  async function handleSubmit(event) {
     event.preventDefault();
     if (!post) {
       alert("Post cannot be empty!");
-    } else {
-      try {
-        const token = localStorage.getItem("auth")
-        let payload = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            post: post,
-          }),
-        };
-        let response = fetch(
-          `${process.env.REACT_APP_API_URL}/post/create`,
-          payload
-        ).
-        then((res) => res.json()).then((data) => {
-          if (data.message) {
-              console.log(data.message)
-          } else {                 
-              setPosts(arr => [data, ...arr]) 
-              setPost("");
-          }
-        });
-      } catch (error) {
-        console.log(error)
-      }
+      return
+    } 
+    const body = JSON.stringify({
+      post: post
+    })
+    const response = await API.POST('post/create', body)
+    if (response) {
+      setPosts(arr => [response, ...arr]) 
+      setPost("");
     }
   }
 

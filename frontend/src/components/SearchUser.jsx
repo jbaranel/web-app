@@ -2,26 +2,17 @@ import { React, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import UserCard from "./UserCard";
-
+import API from "../apiHelper"
 function SearchUser() {
   const [searchUser, setSearchUser] = useState("");
   const [users, setUsers] = useState([]);
 
   const getUser = async () => {
     if (searchUser) {
-      const token = localStorage.getItem("auth")
-      let payload = {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          },           
-        };
-        let user = await fetch(
-          `${process.env.REACT_APP_API_URL}/user/search/${searchUser}`,
-          payload
-        ).then(res => res.json())                   
-        setUsers(user)
+      const response = await API.GET(`user/search/${searchUser}`)
+      if (response) {
+        setUsers(response)
+      }                
     }
     else {
       setUsers([])

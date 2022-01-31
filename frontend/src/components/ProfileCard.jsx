@@ -1,29 +1,22 @@
 import { React, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Loading from "../components/Loading";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import FollowerFollowing from "./User/FollowerFollowing";
+import API from "../apiHelper"
+
 function ProfileCard() {
   const [user, setUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   const getUser = async () => {
     setIsLoading(true);
-    const token = localStorage.getItem("auth");
-    let payload = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    let user = await fetch(
-      `${process.env.REACT_APP_API_URL}/user`,
-      payload
-    ).then((res) => res.json());
-    setUser(user);
+    const response = await API.GET("user")
+    if (response) {
+      setUser(response);
+    }
     setIsLoading(false);
   };
+  
   useEffect(() => {
     getUser();
   }, []);
@@ -36,19 +29,23 @@ function ProfileCard() {
         <>
           <div className="d-flex justify-content-center">
             <div>
-              <h1>
-                {user.firstName} {user.lastName}
-              </h1>
-
-              <Avatar
-                alt="Profile Picture"
-                src={user.avatar_url}
-                sx={{ width: 128, height: 128 }}
+              <div>
+                <h1 className="text-center">
+                  {user.firstName} {user.lastName}
+                </h1>
+                <h3 className="text-center">@{user.username}</h3>
+              </div>
+              <div align="center">
+                <Avatar
+                  alt="Profile Picture"
+                  src={user.avatar_url}
+                  sx={{ width: 128, height: 128 }}
+                />
+              </div>
+              <FollowerFollowing
+                followers={user.followers}
+                following={user.following}
               />
-
-              <ul>
-                {/* Following: {user.following.map((follow, index) => {return <li key={index}>{follow}</li>})} */}
-              </ul>
             </div>
           </div>
         </>

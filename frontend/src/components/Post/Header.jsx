@@ -3,6 +3,7 @@ import { Avatar } from "@mui/material";
 import { Typography } from "@mui/material";
 
 function Header( {avatar_url, username} ) {
+  
   return (
     <div>
       <div className="d-flex flex-row mb-2 align-items-center">

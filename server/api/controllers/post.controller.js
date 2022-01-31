@@ -80,21 +80,17 @@ export async function commentOnPost (req, res) {
   const user = await getUserByUsername(username)
   const user_id = user.user_id;
 
-  const newComment = {
+  let newComment = {
     comment_id: uuidv4(),
     post_id: id,
     user_id: user_id,
     created_at: getCurrentTimestamp(),
     comment: comment
-  }
-
+  }  
   const response = await insertComment(newComment)
-  if (response) {
-    res.status(201).send()
-  }
-  else {
-    res.status(400).send()
-  }
+  newComment.username = username,
+  newComment.avatar_url = user.avatar_url
+  return  res.send(newComment)  
 }
 
 export async function getUserPosts (req, res) {

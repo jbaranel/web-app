@@ -74,10 +74,15 @@ export async function getAllPosts () {
 }
 
 export async function insertPost (post) {
+
     const database = await connection()
     let res;
     try {
       res = await database('Post').insert(post)
+      res = await database('Post')
+      .join('User', 'Post.user_id', '=', 'User.user_id')
+      .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
+      .where('Post.post_id', '=', `${post.post_id}`)       
     }
     catch (err) {
       console.log(err)
@@ -85,7 +90,7 @@ export async function insertPost (post) {
     finally {
       database.destroy()
     }
-    return post
+    return res[0]   
 }
 
 export async function insertComment (comment) {
@@ -100,7 +105,7 @@ export async function insertComment (comment) {
   finally {
     database.destroy()
   }
-  return comment
+  return res[0]
 }
 
 export async function getPostsByUserId (user_id) {  

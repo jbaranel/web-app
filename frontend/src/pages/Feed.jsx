@@ -5,6 +5,7 @@ import CreatePost from "../components/CreatePost";
 import Loading from "../components/Loading";
 import "../components/styles/Main.css"
 import MainContainer from "../components/MainContainer";
+import API from "../apiHelper.js"
 export const FeedContext = createContext(null);
 
 export default function Feed() {
@@ -15,26 +16,13 @@ export default function Feed() {
 
   async function getPosts() {
     setIsLoading(true);
-    let payload = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    let response = await fetch(
-      `${process.env.REACT_APP_API_URL}/post/all`,
-      payload
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
-      })
-      .catch((error) => {
-        alert("Cannot get posts");
-      });
+    const response = await API.GET('post/all')
+    if (response) {
+      setPosts(response)
+    }   
     setIsLoading(false);
   }
+  
   useEffect(() => {
     getPosts();
   }, []);

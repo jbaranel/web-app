@@ -20,9 +20,9 @@ function Navbar() {
         <nav className="nav-menu active">
           <ul className="nav-menu-items">
             <li className="navbar-toggle">
-              <Link to="#" className="menu-bars">
+              {/*<Link to="#" className="menu-bars">
                 LOGO
-              </Link>
+              </Link>*/}
             </li>
             {SidebarData.map((item, index) => {
               return (

@@ -37,7 +37,7 @@ export async function getUserByUsername (username) {
     try {
       //ugly but works, may want to refactor this
       res = await database.raw(
-        `SELECT user_id, username, firstName, lastName, avatarUrl
+        `SELECT user_id, username, firstName, lastName, avatar_url
         FROM (
           SELECT following_id FROM Web_App.Follow, Web_App.User 
           WHERE username = "${username}"
@@ -45,6 +45,33 @@ export async function getUserByUsername (username) {
         ) as Followers
         INNER JOIN Web_App.User
         ON User.user_id = Followers.following_id;`
+      )
+      //console.log(res[0])
+    }
+    catch (err) {
+      console.log(err)
+      res = []
+    }
+    finally {
+      database.destroy()
+    }
+    return res[0]
+  }
+
+  export async function getFollowingByUsername (username) {
+    const database = await connection()
+    let res;
+    try {
+      //ugly but works, may want to refactor this
+      res = await database.raw(
+        `SELECT user_id, username, firstName, lastName, avatar_url
+        FROM (
+          SELECT follower_id FROM Web_App.Follow, Web_App.User 
+          WHERE username = "${username}"
+          AND user_id = following_id
+        ) as Following
+        INNER JOIN Web_App.User
+        ON User.user_id = Following.follower_id;`
       )
       //console.log(res[0])
     }

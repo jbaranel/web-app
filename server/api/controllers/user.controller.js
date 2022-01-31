@@ -1,4 +1,4 @@
-import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery, searchUserByUsername} from "../services/user.service.js";
+import { getUserByUsername, getFollowersByUsername, addNewFollower, updateUserQuery, searchUserByUsername, getFollowingByUsername} from "../services/user.service.js";
 import { generateUploadUrl } from "../helpers/upload.js"
 import { getCurrentTimestamp } from "../helpers/utils.js";
 
@@ -7,10 +7,13 @@ export async function getUser(req, res) {
 
   if (!username) {
     username = req.user.username
-  }
-  
-  const user = await getUserByUsername(username);
+  }  
+  let user = await getUserByUsername(username);
+  const followers = await getFollowersByUsername(username)
+  const following = await getFollowingByUsername(username)
 
+  user.followers = followers
+  user.following = following  
   if (username === user?.username) {
     const returnUser = (user) => {
       delete user.password
