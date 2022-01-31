@@ -21,6 +21,9 @@ function CreateComment() {
       `post/${post.post_id}/reply`,
       body
     );
+    if (response) {
+      setComments(comments => [response, ...comments])
+    }
   }
 
   return (

@@ -42,7 +42,7 @@ class API {
     return response;
   }
 
-  async POST(url, body) {
+  async PATCH(url, body) {
     const params = {
       method: "PATCH",
       headers: {

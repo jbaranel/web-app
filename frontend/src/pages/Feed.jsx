@@ -7,12 +7,9 @@ import "../components/styles/Main.css"
 import MainContainer from "../components/MainContainer";
 import API from "../apiHelper.js"
 export const FeedContext = createContext(null);
-
 export default function Feed() {
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
-  const token = localStorage.getItem("auth");
 
   async function getPosts() {
     setIsLoading(true);
@@ -21,6 +18,7 @@ export default function Feed() {
       setPosts(response)
     }   
     setIsLoading(false);
+    
   }
   
   useEffect(() => {

@@ -5,7 +5,7 @@ import Loading from "../components/Loading"
 import List from "../components/User/FollowList"
 import "../components/styles/Main.css"
 import API from "../apiHelper"
-
+import UserCard from "../components/UserCard"
 function UserPage() {
   const [user, setUser] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,13 @@ function UserPage() {
       {isLoading ? <Loading /> : 
       <>
       <ProfileCard user={user} />
-      {user.followers.map(follower => <List follower={follower}/>)}      
+      <h3>Followers</h3>
+      {user.followers.length ? (
+      user.followers.map((follower, index) => {
+        return <UserCard user={follower} key={index}/>
+      })) 
+      : (
+      <div>No results</div>)}        
       </>
       }
     </div>

@@ -10,11 +10,10 @@ import { Typography } from '@mui/material';
 import API from "../apiHelper.js"
 
 function Profile() {
+
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const token = localStorage.getItem("auth");
 
   async function getPosts() {
     setIsLoading(true);
