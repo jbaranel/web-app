@@ -2,9 +2,10 @@ import { getCurrentTimestamp, sortDates } from "../helpers/utils";
 import { v4 as uuidv4 } from "uuid";
 import { getPostById, deletePostById, getAllPosts, insertPost, getPostCommentsById, insertComment, getPostsByUserId } from "../services/post.service"
 import { getUserByUsername } from "../services/user.service"
+import { Request, Response } from "express"
 
 //create 
-export async function createPost(req, res) {
+export async function createPost(req: any, res: Response) {
   const { username } = req.user;
   const {user_id} = await getUserByUsername(username)
 

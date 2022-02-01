@@ -1,15 +1,14 @@
 import knex from "knex"
-import config from "../../config"
 
 export async function connection () {
   const database =  knex({
     client: 'mysql2',
     connection: {
-      host : config.DB_URI,
+      host : process.env.DB_URI,
       port : 3306,
-      user : config.DB_USERNAME,
-      password : config.DB_PASSWORD,
-      database : config.DB_NAME
+      user : process.env.DB_USERNAME,
+      password : process.env.DB_PASSWORD,
+      database : process.env.DB_NAME
     }
   });
   return database

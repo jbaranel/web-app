@@ -1,5 +1,6 @@
 
 import { connection } from "../helpers/db_connector"
+import { User } from "../../@types/user.d"
 
 export async function getUserByUsername (username: string) {
     const database = await connection()

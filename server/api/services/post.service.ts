@@ -1,6 +1,8 @@
 import { connection } from "../helpers/db_connector"
+import { Post } from "../../@types/post.d"
+import { User } from "../../@types/user.d"
 
-export async function getPostById (id) {
+export async function getPostById (id: string) {
     const database = await connection()
     let res;
     try {
@@ -18,7 +20,7 @@ export async function getPostById (id) {
     return res[0]
   }
   
-  export async function getPostCommentsById (id) {
+  export async function getPostCommentsById (id: string) {
     const database = await connection()
     let res;
     try {
@@ -39,7 +41,7 @@ export async function getPostById (id) {
   }
 
 
-export async function deletePostById (id) {
+export async function deletePostById (id:string ) {
     const database = await connection()
     let res;
     try {

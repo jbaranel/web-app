@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken"
 import { getUserByUsername, insertUser } from "../services/user.service";
+import { Request, Response } from "express"
 
-export async function createUser(req, res) {
+export async function createUser(req: Request, res: Response) {
   const { username, password, firstName, lastName, email } = req.body;
 
   if (!username) {
@@ -47,9 +48,10 @@ export async function createUser(req, res) {
 
         const response = await insertUser(user)
         if (response) {
+          const secret: string = process.env.JWT_SECRET ?? ""
           const accessToken = jwt.sign(
             { username: username },
-            process.env.JWT_SECRET
+            secret
           );
           return res.send({accessToken: accessToken, user});
         }
@@ -60,7 +62,7 @@ export async function createUser(req, res) {
     }
   }
 
-export async function login(req, res) {
+export async function login(req: Request, res: Response) {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -73,9 +75,10 @@ export async function login(req, res) {
   } else {
     bcrypt.compare(password, user.password, (error, response) => {
       if (response) {
+        const secret: string = process.env.JWT_SECRET ?? ""
         const accessToken = jwt.sign(
           { username: username },
-          process.env.JWT_SECRET
+          secret
         );
         return res.send({accessToken: accessToken, user });
       } else {
