@@ -1,21 +1,37 @@
-import express from "express"
-import { getUser, followUser, updateUser, generateUrl, getFollowers, searchUsername } from "../controllers/user.controller"
-import auth from "../middleware/auth"
+import express from "express";
+import {
+  getUser,
+  followUser,
+  updateUser,
+  generateUrl,
+  getFollowers,
+  searchUsername,
+  getFollowing,
+  getUserLikes,
+  unfollowUser
+} from "../controllers/user.controller";
+import auth from "../middleware/auth";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/avatarUpload', auth, generateUrl)
+router.get("/avatarUpload", auth, generateUrl);
 
-router.get('/:username', auth, getUser)
+router.get("/:username", auth, getUser);
 
-router.get('/', auth, getUser)
+router.get("/", auth, getUser);
 
-router.patch('/', auth, updateUser)
+router.patch("/", auth, updateUser);
 
-router.post('/:username/follow', auth, followUser)
+router.post("/:username/follow", auth, followUser);
 
-router.get('/:username/followers', auth, getFollowers)
+router.delete("/:username/follow", auth, unfollowUser);
 
-router.get('/search/:username', auth, searchUsername)
+router.get("/:username/followers", auth, getFollowers);
 
-export default router
+router.get("/:username/following", auth, getFollowing);
+
+router.get("/:username/liked_posts", auth, getUserLikes);
+
+router.get("/search/:username", auth, searchUsername);
+
+export default router;

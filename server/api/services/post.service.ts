@@ -1,129 +1,136 @@
-import { connection } from "../helpers/db_connector"
-import { Post } from "../../@types/post.d"
-import { User } from "../../@types/user.d"
+import db from "../database/database"
+import { Post, User, Like } from "../../@types/schema.d"
+
 
 export async function getPostById (id: string) {
-    const database = await connection()
-    let res;
     try {
-      res = await database('Post')
+      const query = await db<Post>('Post')
         .join('User', 'Post.user_id', '=', 'User.user_id')
         .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
         .where('Post.post_id', '=', `${id}`)          
+      return query[0]
     }
     catch (err) {
       console.log(err)
+      return
     }
-    finally {
-      database.destroy()
-    }
-    return res[0]
   }
   
   export async function getPostCommentsById (id: string) {
-    const database = await connection()
-    let res;
     try {
-      res = await database('Comments')
+      const query = await db('Comments')
       .join('User', 'User.user_id', '=', 'Comments.user_id')
       .select('Comments.comment_id', 'User.user_id', 'Comments.created_at', 'Comments.comment', 'User.username', 'User.avatar_url' )
-      .where('Comments.post_id', '=', `${id}`)    
+      .where('Comments.post_id', '=', `${id}`)
+      return query
       
-      database.select().from("Comments").where({ post_id: id })
+      //db.select().from("Comments").where({ post_id: id })
     }
     catch (err) {
       console.log(err)
+      return
     }
-    finally {
-      database.destroy()
-    }
-    return res
   }
 
 
-export async function deletePostById (id:string ) {
-    const database = await connection()
-    let res;
+export async function deletePostById (id: string) {    
     try {
-      res = await database("Post").where({ post_id: id }).delete()
+      const query = await db<Post>("Post").where({ post_id: id }).delete()
+      return query[0]
     }
     catch (err) {
       console.log(err)
+      return
     }
-    finally {
-      database.destroy()
-    }
-    return res[0]
 }
 
 export async function getAllPosts () {
   //TODO need to fix this query
-    const database = await connection()
-    let res;
+    
     try {
-      res = await database('Post')
+      const query = await db('Post')
       .join('User', 'Post.user_id', '=', 'User.user_id')
       .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
-      
+      return query
     }
     catch (err) {
       console.log(err)
-    }
-    finally {
-      database.destroy()
-    }
-    return res
+      return
+    }    
 }
 
-export async function insertPost (post) {
-
-    const database = await connection()
-    let res;
+export async function insertPost (post) {        
     try {
-      res = await database('Post').insert(post)
-      res = await database('Post')
+      const res = await db('Post').insert(post)
+      const newPost = await db('Post')
       .join('User', 'Post.user_id', '=', 'User.user_id')
       .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
-      .where('Post.post_id', '=', `${post.post_id}`)       
+      .where('Post.post_id', '=', `${post.post_id}`)      
+      return newPost[0] 
     }
     catch (err) {
       console.log(err)
+      return
     }
-    finally {
-      database.destroy()
-    }
-    return res[0]   
 }
 
-export async function insertComment (comment) {
-  const database = await connection()
-  let res;
+export async function insertComment (comment) {  
   try {
-    res = await database('Comments').insert(comment)
+    const query = await db<Comment>('Comments').insert(comment)
+    return query[0]
   }
   catch (err) {
     console.log(err)
-  }
-  finally {
-    database.destroy()
-  }
-  return res[0]
+    return
+  } 
 }
 
-export async function getPostsByUserId (user_id) {  
-  const database = await connection()
-  let res;
+export async function getPostsByUserId (user_id) {    
   try {
-    res = await database('Post')
+    const query = await db<Post, User>('Post')
       .join('User', 'Post.user_id', '=', 'User.user_id')
-      .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url' )
-      .where('User.user_id', '=', `${user_id}`)          
+      .select('post_id', 'User.user_id', 'Post.created_at', 'post', 'likes', 'username', 'avatar_url')
+      .where('User.user_id', '=', `${user_id}`) 
+    return query         
   }
   catch (err) {
     console.log(err)
+    return
+  }  
+}
+
+export async function insertLike(like: Like) {
+  try {
+    const query = await db<Like>('Likes').insert(like)
+    return query
   }
-  finally {
-    database.destroy()
+  catch (err) {
+    console.log(err)
+    return
   }
-  return res
+}
+
+export async function getAllLikes(post: Post) {
+  try {
+    const query = await db<Like>('Likes')
+      .join('User', 'Likes.user_id', '=', 'User.user_id')
+      .select('User.user_id', 'Likes.created_at', 'username', 'avatar_url' )
+      .where('Likes.post_id', '=', `${post.post_id}`)
+    return query
+  }
+  catch (err) {
+    console.log(err)
+    return
+  }
+}
+
+export async function deleteLike(id, user_id) {
+  try {
+    const query = await db<Like>("Likes").where({ post_id: id, user_id: user_id }).delete()
+    return query
+  }
+  catch (err) {
+    console.log(err)
+    return
+  }
 }

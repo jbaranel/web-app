@@ -1,10 +1,10 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express'
 import cors from 'cors'
 import userRoute from './api/routes/user.route'
 import postRoute from './api/routes/post.route'
 import homeRoute from './api/routes/home.route'
-import dotenv from 'dotenv'
-dotenv.config()
 import config from './config'
 
 const app = express()
@@ -22,3 +22,5 @@ app.use('/', homeRoute)
 app.listen(port, () => {
     console.log(`API running on port:${port}`)
 })
+
+export default app

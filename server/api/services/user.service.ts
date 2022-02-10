@@ -1,43 +1,32 @@
 
-import { connection } from "../helpers/db_connector"
-import { User } from "../../@types/user.d"
+import db from '../database/database'
+import { User } from "../../@types/schema.d"
 
-export async function getUserByUsername (username: string) {
-    const database = await connection()
-    let res;
+export async function getUserByUsername (username: string) {    
     try {
-      res = await database.select().from("User").where({ username: username })
+      const query = await db<User>('User').select().where({ username: username })
+      return query[0]
     }
     catch (err) {
       console.log(err)
-    }
-    finally {
-      database.destroy()
-    }
-    return res[0]
+      return 
+    }    
   }
   
-  export async function searchUserByUsername (username: string) {
-    const database = await connection()
-    let res;
+  export async function searchUserByUsername (username: string) {    
     try {
-      res = await database.select('username', 'avatar_url', 'firstName', 'lastName').from("User").where('username', 'like', `%${username}%`)
+      const query = await db<User>('User').select('username', 'avatar_url', 'firstName', 'lastName').from("User").where('username', 'like', `%${username}%`)
+      return query
     }
     catch (err) {
       console.log(err)
+      return
     }
-    finally {
-      database.destroy()
-    }
-    return res
   }
 
-  export async function getFollowersByUsername (username: string) {
-    const database = await connection()
-    let res;
+  export async function getFollowingByUsername (username: string) {
     try {
-      //ugly but works, may want to refactor this
-      res = await database.raw(
+      const query = await db.raw(
         `SELECT user_id, username, firstName, lastName, avatar_url
         FROM (
           SELECT following_id FROM Web_App.Follow, Web_App.User 
@@ -47,24 +36,18 @@ export async function getUserByUsername (username: string) {
         INNER JOIN Web_App.User
         ON User.user_id = Followers.following_id;`
       )
-      //console.log(res[0])
+      return query[0]
     }
     catch (err) {
       console.log(err)
-      res = []
-    }
-    finally {
-      database.destroy()
-    }
-    return res[0]
+      return
+    }    
   }
 
-  export async function getFollowingByUsername (username: string) {
-    const database = await connection()
-    let res;
+  export async function getFollowersByUsername (username: string) {
     try {
       //ugly but works, may want to refactor this
-      res = await database.raw(
+      const query = await db.raw(
         `SELECT user_id, username, firstName, lastName, avatar_url
         FROM (
           SELECT follower_id FROM Web_App.Follow, Web_App.User 
@@ -74,62 +57,56 @@ export async function getUserByUsername (username: string) {
         INNER JOIN Web_App.User
         ON User.user_id = Following.follower_id;`
       )
+      return query[0]
       //console.log(res[0])
     }
     catch (err) {
       console.log(err)
-      res = []
-    }
-    finally {
-      database.destroy()
-    }
-    return res[0]
+      return
+    }    
   }
   
-  export async function addNewFollower (follow) {
-    const database = await connection()
-    let res;
+  export async function addNewFollower (follow) {    
+    try {
+      const query = await db('Follow').insert(follow)
+      return query
+    }
+    catch (err) {
+      console.log(err)
+      return
+    }
+  }
+
+  export async function deleteFollow (user_id: string) {
+    try {
+      const query = await db('Follow').where({ follower_id: user_id }).delete()
+      return query
+    }
+    catch (err) {
+      console.log(err)
+      return
+    }
+  }
+  
+  export async function insertUser (user) {    
+    try {
+      const query = await db<User>('User').insert(user)
+      return query
+    }
+    catch (err) {
+      console.log(err)
+      return
+    }    
+  }
+  
+  export async function updateUserQuery (user) {    
     
     try {
-      res = await database('Follow').insert(follow)
+      const query = await db<User>('User').where({ user_id: user.user_id }).update(user)
+      return query[0]
     }
     catch (err) {
       console.log(err)
-      res = err
-    }
-    finally {
-      database.destroy()
-    }
-    return res
-  }
-  
-  export async function insertUser (user) {
-    const database = await connection()
-    let res;
-    try {
-      res = await database('User').insert(user)
-    }
-    catch (err) {
-      console.log(err)
-    }
-    finally {
-      database.destroy()
-    }
-    return res
-  }
-  
-  export async function updateUserQuery (user) {
-    console.log(user)
-    const database = await connection()
-    let res;
-    try {
-      res = await database('User').where({ user_id: user.user_id }).update(user)
-    }
-    catch (err) {
-      console.log(err)
-    }
-    finally {
-      database.destroy()
-    }
-    return res[0]
+      return
+    }    
   }

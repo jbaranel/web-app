@@ -4,12 +4,9 @@ export interface User {
     email: string,
     firstName: string,
     lastName: string,
-    avatar_url: string | "",
+    avatar_url: string
     created_at: string,
-    password?: string
-}
-
-export interface Followers {
-    followers: User[],
-    following: User[]
+    password: string,
+    followers?: User[],
+    following?: User[]
 }
