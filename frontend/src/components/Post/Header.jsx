@@ -7,7 +7,7 @@ function Header( {avatar_url, username} ) {
   return (
     <div>
       <div className="d-flex flex-row mb-2 align-items-center">
-        <div className="mx-2">
+        <div className="mr-2">
           {avatar_url ? (
             <Avatar
               alt="Profile Picture"

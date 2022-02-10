@@ -1,14 +1,19 @@
 import React from "react";
 import { Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 function FollowerFollowing({ followers, following }) {
   return (
-    <div>        
+    <div>
+      <Link to={'following'}>
       <span className="m-0">
-        {followers.length} Following        
+        {following.length} Following        
       </span>
+      </Link>
+      <Link to={'followers'}>
       <span>
-      {following.length} Followers 
+      {followers.length} Followers 
       </span>
+      </Link>
     </div>
   );
 }

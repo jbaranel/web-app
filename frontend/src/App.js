@@ -22,6 +22,8 @@ function App() {
         <Route path="/feed" element={<Feed/>} />
         <Route path="/post/:post_id" element={<PostPage/>} />
         <Route path="/user/:username" element={<UserPage/>} />
+        <Route path="/user/:username/followers" element={<UserPage/>} />
+        <Route path="/user/:username/following" element={<UserPage/>} />
         <Route path="/profile" element={<Profile/>} />
       </Route>
       <Route path="/register" element={<Register/>} />

@@ -3,34 +3,35 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import UserCard from "./UserCard";
 import API from "../apiHelper"
+import useFetch from '../hooks/useFetch'
+import {getUser} from '../utils'
+import userApi from '../api/user'
+
 function SearchUser() {
   const [searchUser, setSearchUser] = useState("");
-  const [users, setUsers] = useState([]);
 
-  const getUser = async () => {
-    if (searchUser) {
-      const response = await API.GET(`user/search/${searchUser}`)
-      if (response) {
-        setUsers(response)
-      }                
-    }
-    else {
-      setUsers([])
-    }
-  }
+  const user = getUser()
+  const { response: userFollowing, setResponse: setFollowing, refetch: fetchUser } = useFetch(userApi.getUserFollowing, user.username);
+
+  const { response: users, setResponse: setUsers, loading, refetch: getUsers } = useFetch(userApi.searchUsers, searchUser);
+  
   const handleSubmit = (event) => {
     event.preventDefault();
-    getUser()
-    console.log(users)
   }
 
     useEffect(() => {
-      getUser()
+      if (searchUser) {
+        getUsers()
+        fetchUser()
+      }
+      else {
+        setUsers([])
+      }
     }, [searchUser])
 
   return (
     <div>
-      <Form onSubmit={handleSubmit}>
+      <Form className="mb-3" onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Search</Form.Label>
           <Form.Control
@@ -40,13 +41,14 @@ function SearchUser() {
             onChange={(e) => setSearchUser(e.target.value)}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <button className="pill_button" variant="primary" type="submit">
           Search
-        </Button>
+        </button>
       </Form>
-      {users.length ? (
+      {users?.length ? (
       users.map((user, index) => {
-        return <UserCard user={user} key={index}/>
+        const following = !!userFollowing.find(following => following.username === user.username)
+        return <UserCard following={following} userFollowing={userFollowing} setFollowing={setFollowing} user={user} key={index}/>
       })) 
       : searchUser && (
       <div>No results</div>)}       

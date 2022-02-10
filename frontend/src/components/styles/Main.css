@@ -1,4 +1,54 @@
 .main-container {
     margin-left: 16em;
 }
-//background-color: #f0f2f5;
+
+.user_header {
+    margin-left: 0rem;
+    color: rgb(0, 0, 0);
+}
+.user_header:hover {
+    cursor: pointer;
+    transition: 0.5s;
+    margin-left: 0.5rem;
+    color: rgb(47, 51, 61);
+}
+
+.clickable_div:hover {
+    cursor: pointer;
+}
+
+.pill_button {
+    background-color: #1a83ff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 32px;
+}
+
+.pill_button:hover{
+    background-color: #1166c7;
+    transition: 0.25s;
+}
+
+.pill_button_dark {
+    background-color: #001d3f;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 32px;
+
+}
+
+.pill_button_dark:hover{
+    transition: 0.25s;
+}

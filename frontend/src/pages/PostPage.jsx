@@ -1,6 +1,6 @@
 import { React, useState, useEffect, createContext } from "react";
 import { useLocation } from "react-router-dom";
-import SinglePost from "../components/SinglePost";
+import Post from "../components/Post";
 import "../components/styles/Main.css";
 import Container from "react-bootstrap/Container";
 import Comments from "../components/Comments";
@@ -40,7 +40,7 @@ function PostPage() {
             <Loading />
           ) : (
             <>
-              <SinglePost post={post} />
+              <Post post={post} />
 
               <CreateComment/>
               <>

@@ -36,7 +36,7 @@ class API {
     const response = await fetch(`${this.base_url}/${url}`, params)
       .then((res) => res.json())
       .catch((error) => {
-        console.log(error)
+        //console.log(error)
         return;
       });
     return response;
@@ -74,7 +74,7 @@ class API {
     const response = await fetch(`${this.base_url}/${url}`, params)
       .then((res) => res.json())
       .catch((error) => {
-        console.log(error)
+        //console.log(error)
         return;
       });
     return response;

@@ -4,33 +4,20 @@ import Container from "react-bootstrap/esm/Container";
 import CreatePost from "../components/CreatePost";
 import Loading from "../components/Loading";
 import "../components/styles/Main.css"
-import MainContainer from "../components/MainContainer";
-import API from "../apiHelper.js"
+import useFetch from "../hooks/useFetch";
+import postApi from '../api/post'
+
 export const FeedContext = createContext(null);
 export default function Feed() {
-  const [posts, setPosts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function getPosts() {
-    setIsLoading(true);
-    const response = await API.GET('post/all')
-    if (response) {
-      setPosts(response)
-    }   
-    setIsLoading(false);
-    
-  }
   
-  useEffect(() => {
-    getPosts();
-  }, []);
+  const {response: posts, loading, setResponse: setPosts} = useFetch(postApi.getAllPosts)  
 
   return (
     <FeedContext.Provider value={{ posts, setPosts }}>
       <div className="main-container">
         <Container>
           <CreatePost />
-          {isLoading ? (
+          {loading ? (
             <Loading />
           ) : (
             posts.map((post, index) => {

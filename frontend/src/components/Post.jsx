@@ -1,4 +1,4 @@
-import { React, useState, useContext } from "react";
+import { React, useState, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FeedContext } from "../pages/Feed";
 import PostHeader from "./Post/Header";
@@ -7,23 +7,20 @@ import PostBody from "./Post/Body";
 import PostTimestamp from "./Post/Timestamp";
 import Card from "react-bootstrap/Card";
 import API from "../apiHelper";
+import {getUser} from '../utils'
+import '../components/styles/Main.css'
+export const PostContext = createContext()
+
 function Post({ post }) {
-  const [userLiked, setUserliked] = useState(false);
-  const [likecount, setLikecount] = useState(post.likes);
-  const setPosts = useContext(FeedContext);
-  const navigate = useNavigate();
 
-  const updateLikes = () => {
-    if (userLiked) {
-      setLikecount(likecount - 1);
-      setUserliked(false);
-    } else {
-      setLikecount(likecount + 1);
-      setUserliked(true);
-    }
-    return;
-  };
-
+  const { username } = getUser()
+  const [userLiked, setUserliked] = useState(post.likes.find((like) => {
+    return like.username === username
+  }));
+  
+  const [likecount, setLikecount] = useState(post.likes.length);
+  const navigate = useNavigate();  
+  
   const handleClick = () => {
     navigate(`/post/${post.post_id}`);
   };
@@ -39,18 +36,20 @@ function Post({ post }) {
   };
 
   return (
-    <div>
-      <Card className="p-2 mb-2">
-        <div onClick={goToUserProfile}>
+    <PostContext.Provider value={{post, likecount, setLikecount, userLiked, setUserliked}}>
+      <Card className="p-3 mb-2">
+        <div className="user_header" onClick={goToUserProfile}>
           <PostHeader username={post.username} avatar_url={post.avatar_url} />
         </div>
-        <div onClick={handleClick}>
+        <div className= "clickable_div" onClick={handleClick}>
           <PostBody body={post.post} />
           <PostTimestamp timestamp={post.created_at} />
         </div>
-        <PostFooter />
+        <div>
+         <PostFooter />
+        </div>
       </Card>
-    </div>
+    </PostContext.Provider>
   );
 }
 

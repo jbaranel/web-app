@@ -2,28 +2,18 @@ import { React, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Loading from "../components/Loading";
 import FollowerFollowing from "./User/FollowerFollowing";
-import API from "../apiHelper"
+import userApi from '../api/user'
+import useFetch from "../hooks/useFetch";
+import {getUser} from '../utils'
 
 function ProfileCard() {
-  const [user, setUser] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
-  const getUser = async () => {
-    setIsLoading(true);
-    const response = await API.GET("user")
-    if (response) {
-      setUser(response);
-    }
-    setIsLoading(false);
-  };
+  const { username } = getUser()
+  const { response: user, loading } = useFetch(userApi.getUser, username);
   
-  useEffect(() => {
-    getUser();
-  }, []);
-
   return (
     <div>
-      {isLoading ? (
+      {loading ? (
         <Loading />
       ) : (
         <>
